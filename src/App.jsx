@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AlertCircle, LogOut, Plus, Edit2, Trash2, X } from 'lucide-react'; 
  
 // IMPORTANT: Change this to your deployed API URL after deploying the backend 
-const API_URL = 'http://localhost:8000'; 
+const API_URL = 'https://my-first-fastapi-0zqy.onrender.com'; 
  
 export default function App() { 
   const [token, setToken] = useState(localStorage.getItem('token')); 
@@ -167,3 +167,4 @@ export default function App() {
     </div> 
   ); 
 } 
+
