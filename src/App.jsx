@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AlertCircle, LogOut, Plus, Edit2, Trash2, X } from 'lucide-react';
 
-// Change this to your deployed API URL
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -27,7 +26,7 @@ export default function App() {
     setLoading(true);
     
     try {
-      const response = await fetch(`${API_URL}/login`, {
+      const response = await fetch(`${apiUrl}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -49,7 +48,7 @@ export default function App() {
 
   const logout = async () => {
     try {
-      await fetch(`${API_URL}/logout`, {
+      await fetch(`${apiUrl}/logout`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -65,7 +64,7 @@ export default function App() {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/products`, {
+      const response = await fetch(`${apiUrl}/products`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -84,7 +83,7 @@ export default function App() {
     setLoading(true);
     
     try {
-      const response = await fetch(`${API_URL}/products`, {
+      const response = await fetch(`${apiUrl}/products`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -114,7 +113,7 @@ export default function App() {
     setLoading(true);
     
     try {
-      const response = await fetch(`${API_URL}/products/${editingProduct.id}`, {
+      const response = await fetch(`${apiUrl}/products/${editingProduct.id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -145,7 +144,7 @@ export default function App() {
     
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/products/${id}`, {
+      const response = await fetch(`${apiUrl}/products/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
