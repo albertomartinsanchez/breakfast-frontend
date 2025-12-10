@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AlertCircle, LogOut, Plus, Edit2, Trash2, X } from 'lucide-react';
 
 // Change this to your deployed API URL
-const API_URL = 'http://localhost:8000';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
