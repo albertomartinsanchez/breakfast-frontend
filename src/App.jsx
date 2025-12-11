@@ -26,7 +26,7 @@ export default function App() {
     setLoading(true);
     
     try {
-      const response = await fetch(`${apiUrl}/login`, {
+      const response = await fetch(`${apiUrl}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -48,7 +48,7 @@ export default function App() {
 
   const logout = async () => {
     try {
-      await fetch(`${apiUrl}/logout`, {
+      await fetch(`${apiUrl}/auth/logout`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
