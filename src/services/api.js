@@ -34,12 +34,10 @@ async function request(endpoint, options = {}) {
     const data = await response.json().catch(() => null)
     
     if (!response.ok) {
-      // Better error message extraction
       let message = 'An error occurred'
       
       if (data?.detail) {
         if (Array.isArray(data.detail)) {
-          // Validation errors
           message = data.detail.map(err => `${err.loc[1]}: ${err.msg}`).join(', ')
         } else if (typeof data.detail === 'string') {
           message = data.detail
@@ -77,6 +75,16 @@ export const api = {
   getSale: (id) => request(`/sales/${id}`),
   updateSale: (id, data) => request(`/sales/${id}`, { method: 'PUT', body: data }),
   deleteSale: (id) => request(`/sales/${id}`, { method: 'DELETE' }),
+  
+  // Phase 1: Delivery Management
+  updateSaleStatus: (id, data) => request(`/sales/${id}`, { method: 'PATCH', body: data }),
+  getSaleState: (id) => request(`/sales/${id}/state`),
+  startDelivery: (id) => request(`/sales/${id}/delivery`, { method: 'POST' }),
+  getDeliveryRoute: (id) => request(`/sales/${id}/delivery`),
+  updateDeliveryRoute: (id, route) => request(`/sales/${id}/delivery`, { method: 'PATCH', body: { route } }),
+  getDeliveryProgress: (id) => request(`/sales/${id}/delivery/progress`),
+  updateDeliveryStatus: (saleId, customerId, data) => 
+    request(`/sales/${saleId}/delivery/customers/${customerId}/status`, { method: 'PATCH', body: data }),
 }
 
 export { ApiError }
