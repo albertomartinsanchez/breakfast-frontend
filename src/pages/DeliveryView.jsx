@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { ArrowLeft, Check, SkipForward, Package, DollarSign, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react'
+import { ArrowLeft, Check, SkipForward, Package, DollarSign, AlertCircle, ChevronDown, ChevronUp, MapPin, RotateCcw } from 'lucide-react'
 import { api } from '../services/api'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import Modal from '../components/Modal'
+import RouteManager from '../components/RouteManager'
+import './DeliveryView.css'
 
 export default function DeliveryView() {
   const { id } = useParams()
@@ -17,9 +19,12 @@ export default function DeliveryView() {
   const [selectedCustomer, setSelectedCustomer] = useState(null)
   const [showCompleted, setShowCompleted] = useState(false)
   const [showSkipped, setShowSkipped] = useState(false)
+  const [showRouteManager, setShowRouteManager] = useState(false)
+  const [saleStatus, setSaleStatus] = useState(null)
 
   useEffect(() => {
     loadDeliveryData()
+    loadSaleStatus()
   }, [id])
 
   const loadDeliveryData = async () => {
@@ -38,6 +43,15 @@ export default function DeliveryView() {
     }
   }
 
+  const loadSaleStatus = async () => {
+    try {
+      const sale = await api.getSale(id)
+      setSaleStatus(sale.status)
+    } catch (error) {
+      console.error('Failed to load sale status:', error)
+    }
+  }
+
   const currentDelivery = deliveries.find(d => d.status === 'pending')
   const completedDeliveries = deliveries.filter(d => d.status === 'completed')
   const skippedDeliveries = deliveries.filter(d => d.status === 'skipped')
@@ -52,6 +66,7 @@ export default function DeliveryView() {
         amount_collected: currentDelivery.total_amount
       })
       await loadDeliveryData()
+      await loadSaleStatus()
     } catch (error) {
       alert('Failed to mark as delivered: ' + error.message)
     }
@@ -72,8 +87,23 @@ export default function DeliveryView() {
       setSkipReason('')
       setSelectedCustomer(null)
       await loadDeliveryData()
+      await loadSaleStatus()
     } catch (error) {
       alert('Failed to skip delivery: ' + error.message)
+    }
+  }
+
+  const handleSetAsCurrent = async (customer) => {
+    if (!confirm(`Set ${customer.customer_name} as the current stop?`)) return
+    
+    try {
+      await api.updateDeliveryStatus(id, customer.customer_id, {
+        status: 'pending'
+      })
+      await loadDeliveryData()
+      await loadSaleStatus()
+    } catch (error) {
+      alert('Failed to reset delivery: ' + error.message)
     }
   }
 
@@ -82,9 +112,15 @@ export default function DeliveryView() {
     setShowSkipModal(true)
   }
 
+  const handleRouteSaved = async () => {
+    await loadDeliveryData()
+    alert('Route updated successfully!')
+  }
+
   if (loading) return <div>Loading...</div>
 
   const progressPercentage = progress ? ((progress.completed_count / progress.total_deliveries) * 100).toFixed(0) : 0
+  const isCompleted = saleStatus === 'completed'
 
   return (
     <div className="delivery-view">
@@ -92,6 +128,11 @@ export default function DeliveryView() {
         <Link to={`/sales/${id}`}>
           <Button variant="secondary"><ArrowLeft size={16} /> Back to Sale</Button>
         </Link>
+        {!isCompleted && (
+          <Button variant="primary" onClick={() => setShowRouteManager(true)}>
+            <MapPin size={16} /> Manage Route
+          </Button>
+        )}
       </div>
 
       {/* Progress Header */}
@@ -237,7 +278,18 @@ export default function DeliveryView() {
                       {new Date(delivery.completed_at).toLocaleTimeString()}
                     </span>
                   </div>
-                  <span className="completed-amount">${delivery.amount_collected.toFixed(2)}</span>
+                  <div className="completed-actions">
+                    <span className="completed-amount">${delivery.amount_collected.toFixed(2)}</span>
+                    {!isCompleted && (
+                      <Button 
+                        variant="secondary" 
+                        onClick={() => handleSetAsCurrent(delivery)}
+                        style={{ marginLeft: 'var(--spacing-sm)' }}
+                      >
+                        <RotateCcw size={14} />
+                      </Button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -260,7 +312,18 @@ export default function DeliveryView() {
                     <strong>{delivery.customer_name}</strong>
                     <span className="skipped-reason">{delivery.skip_reason}</span>
                   </div>
-                  <span className="skipped-amount">-${delivery.total_amount.toFixed(2)}</span>
+                  <div className="skipped-actions">
+                    <span className="skipped-amount">-${delivery.total_amount.toFixed(2)}</span>
+                    {!isCompleted && (
+                      <Button 
+                        variant="secondary" 
+                        onClick={() => handleSetAsCurrent(delivery)}
+                        style={{ marginLeft: 'var(--spacing-sm)' }}
+                      >
+                        <RotateCcw size={14} />
+                      </Button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -286,19 +349,9 @@ export default function DeliveryView() {
               onChange={(e) => setSkipReason(e.target.value)}
               placeholder="Enter reason (e.g., Customer not home, address not found...)"
               rows="4"
-              style={{
-                width: '100%',
-                padding: 'var(--spacing-md)',
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid var(--color-border)',
-                background: 'var(--color-surface)',
-                color: 'var(--color-text)',
-                fontFamily: 'var(--font-body)',
-                fontSize: '0.95rem',
-                resize: 'vertical'
-              }}
+              className="skip-modal-textarea"
             />
-            <div style={{ display: 'flex', gap: 'var(--spacing-sm)', marginTop: 'var(--spacing-lg)' }}>
+            <div className="skip-modal-actions">
               <Button variant="secondary" onClick={() => setShowSkipModal(false)} fullWidth>
                 Cancel
               </Button>
@@ -310,86 +363,15 @@ export default function DeliveryView() {
         </Modal>
       )}
 
-      <style>{`
-        .delivery-view { max-width: 800px; margin: 0 auto; }
-        .page-header { margin-bottom: var(--spacing-xl); }
-        
-        /* Progress Card */
-        .progress-card h2 { margin-bottom: var(--spacing-lg); }
-        .progress-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: var(--spacing-md); margin-bottom: var(--spacing-lg); }
-        .stat { display: flex; gap: var(--spacing-sm); align-items: center; }
-        .stat svg { color: var(--color-primary); flex-shrink: 0; }
-        .stat-value { font-size: 1.5rem; font-weight: 700; line-height: 1; }
-        .stat-label { font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-        
-        .progress-bar-container { margin-bottom: var(--spacing-md); }
-        .progress-bar { height: 12px; background: var(--color-surface); border-radius: var(--radius-lg); overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--color-success), var(--color-primary)); transition: width 0.3s ease; }
-        .progress-text { text-align: center; font-size: 0.875rem; color: var(--color-text-muted); margin-top: var(--spacing-sm); }
-        
-        .warning-box { display: flex; align-items: center; gap: var(--spacing-sm); padding: var(--spacing-md); background: var(--color-warning-bg); border: 1px solid var(--color-warning); border-radius: var(--radius-md); color: var(--color-warning); font-size: 0.875rem; }
-        
-        /* Current Delivery */
-        .current-delivery { position: relative; padding: var(--spacing-xl); background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-hover) 100%); border: 2px solid var(--color-primary); box-shadow: var(--shadow-glow); }
-        .delivery-badge { position: absolute; top: var(--spacing-md); right: var(--spacing-md); background: var(--color-primary); color: var(--color-bg); padding: 0.25rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.625rem; font-weight: 700; letter-spacing: 0.1em; }
-        .sequence-number { position: absolute; top: var(--spacing-md); left: var(--spacing-md); width: 40px; height: 40px; background: var(--color-primary); color: var(--color-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.125rem; }
-        .current-delivery h2 { margin: var(--spacing-sm) 0 var(--spacing-lg); padding-left: 50px; }
-        
-        .delivery-items { background: var(--color-surface); border-radius: var(--radius-md); padding: var(--spacing-md); margin-bottom: var(--spacing-lg); }
-        .item-row { display: flex; justify-content: space-between; padding: var(--spacing-sm) 0; border-bottom: 1px solid var(--color-border); }
-        .item-row:last-child { border-bottom: none; }
-        .item-name { font-weight: 500; }
-        .item-price { color: var(--color-info); font-weight: 600; }
-        
-        .delivery-total { display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background: var(--color-bg); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg); font-size: 1.125rem; }
-        .total-amount { color: var(--color-success); font-size: 1.5rem; }
-        
-        .delivery-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); }
-        
-        /* Delivery Complete */
-        .delivery-complete { text-align: center; padding: var(--spacing-2xl); }
-        .complete-icon { font-size: 4rem; margin-bottom: var(--spacing-lg); }
-        .delivery-complete h2 { margin-bottom: var(--spacing-xl); }
-        .final-stats { display: grid; gap: var(--spacing-md); max-width: 400px; margin: 0 auto; }
-        .final-stat { display: flex; justify-content: space-between; padding: var(--spacing-md); background: var(--color-surface-hover); border-radius: var(--radius-md); }
-        .final-stat.warning { background: var(--color-warning-bg); border: 1px solid var(--color-warning); }
-        .final-stat .label { color: var(--color-text-muted); }
-        .final-stat .value { font-weight: 700; }
-        .final-stat .value.success { color: var(--color-success); }
-        
-        /* Upcoming */
-        .upcoming-list { display: grid; gap: var(--spacing-sm); }
-        .upcoming-item { display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); background: var(--color-surface-hover); border-radius: var(--radius-md); }
-        .upcoming-number { width: 32px; height: 32px; background: var(--color-border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--color-text-muted); }
-        .upcoming-info { flex: 1; display: flex; justify-content: space-between; align-items: center; }
-        .upcoming-amount { color: var(--color-info); font-weight: 600; }
-        
-        /* Collapsible */
-        .collapsible-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
-        .collapsible-header:hover { opacity: 0.8; }
-        .collapsible-header h3 { margin: 0; }
-        
-        /* Completed */
-        .completed-list { display: grid; gap: var(--spacing-sm); margin-top: var(--spacing-md); }
-        .completed-item { display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background: var(--color-surface-hover); border-radius: var(--radius-md); opacity: 0.7; }
-        .completed-info { display: flex; flex-direction: column; gap: var(--spacing-xs); }
-        .completed-time { font-size: 0.75rem; color: var(--color-text-muted); }
-        .completed-amount { color: var(--color-success); font-weight: 600; }
-        
-        /* Skipped */
-        .skipped-list { display: grid; gap: var(--spacing-sm); margin-top: var(--spacing-md); }
-        .skipped-item { display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background: var(--color-danger-bg); border: 1px solid var(--color-danger); border-radius: var(--radius-md); }
-        .skipped-info { display: flex; flex-direction: column; gap: var(--spacing-xs); }
-        .skipped-reason { font-size: 0.75rem; color: var(--color-text-muted); font-style: italic; }
-        .skipped-amount { color: var(--color-danger); font-weight: 600; }
-        
-        /* Mobile Responsive */
-        @media (max-width: 640px) {
-          .progress-stats { grid-template-columns: repeat(2, 1fr); }
-          .delivery-actions { grid-template-columns: 1fr; }
-          .stat-value { font-size: 1.25rem; }
-        }
-      `}</style>
+      {/* Route Manager Modal */}
+      {!isCompleted && (
+        <RouteManager
+          saleId={id}
+          isOpen={showRouteManager}
+          onClose={() => setShowRouteManager(false)}
+          onSave={handleRouteSaved}
+        />
+      )}
     </div>
   )
 }

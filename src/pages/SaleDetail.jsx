@@ -4,6 +4,7 @@ import { ArrowLeft, Edit, Trash2, Calendar, DollarSign, TrendingUp, Lock, Unlock
 import { api } from '../services/api'
 import Card from '../components/Card'
 import Button from '../components/Button'
+import './SaleDetail.css'
 
 export default function SaleDetail() {
   const { id } = useParams()
@@ -113,7 +114,7 @@ export default function SaleDetail() {
       </div>
 
       <Card title={
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)' }}>
+        <div className="card-title-with-badge">
           <span>Sale - {new Date(sale.date).toLocaleDateString()}</span>
           {getStatusBadge(sale.status)}
         </div>
@@ -179,40 +180,6 @@ export default function SaleDetail() {
           ))}
         </div>
       </Card>
-
-      <style>{`
-        .page-header { display: flex; justify-content: space-between; margin-bottom: var(--spacing-xl); flex-wrap: wrap; gap: var(--spacing-md); }
-        .actions { display: flex; gap: var(--spacing-sm); flex-wrap: wrap; }
-        .sale-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-lg); margin-bottom: var(--spacing-2xl); padding-bottom: var(--spacing-xl); border-bottom: 1px solid var(--color-border); }
-        .summary-item { display: flex; gap: var(--spacing-md); align-items: center; }
-        .summary-item svg { color: var(--color-primary); }
-        .label { font-size: 0.875rem; color: var(--color-text-muted); }
-        .value { font-size: 1.25rem; font-weight: 600; }
-        .revenue { color: var(--color-info); }
-        .profit { color: var(--color-success); }
-        .customers-section h3 { margin-bottom: var(--spacing-lg); }
-        .customer-section { background: var(--color-surface-hover); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--spacing-lg); margin-bottom: var(--spacing-md); }
-        .customer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); flex-wrap: wrap; gap: var(--spacing-sm); }
-        .customer-header h4 { margin: 0; }
-        .customer-totals { display: flex; gap: var(--spacing-md); font-size: 0.875rem; }
-        .products-table { width: 100%; border-collapse: collapse; }
-        .products-table th { text-align: left; padding: var(--spacing-sm); color: var(--color-text-muted); font-weight: 600; font-size: 0.875rem; border-bottom: 1px solid var(--color-border); }
-        .products-table td { padding: var(--spacing-sm); border-bottom: 1px solid var(--color-border); }
-        
-        .status-badge {
-          display: inline-block;
-          padding: 0.25rem 0.75rem;
-          border-radius: var(--radius-sm);
-          font-size: 0.75rem;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-        }
-        .status-draft { background: var(--color-warning-bg); color: var(--color-warning); }
-        .status-closed { background: var(--color-info-bg); color: var(--color-info); }
-        .status-in-progress { background: var(--color-success-bg); color: var(--color-success); }
-        .status-completed { background: var(--color-surface-hover); color: var(--color-text-muted); border: 1px solid var(--color-border); }
-      `}</style>
     </div>
   )
 }
