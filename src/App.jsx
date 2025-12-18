@@ -11,6 +11,7 @@ import Customers from './pages/Customers'
 import Sales from './pages/Sales'
 import SaleDetail from './pages/SaleDetail'
 import CreateSale from './pages/CreateSale'
+import DeliveryView from './pages/DeliveryView'  // NEW
 
 function App() {
   return (
@@ -19,9 +20,6 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          
-          {/* TEMPORARY: Test dashboard directly without layout */}
-          <Route path="/test" element={<Dashboard />} />
           
           <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
             <Route index element={<Navigate to="/dashboard" replace />} />
@@ -32,6 +30,7 @@ function App() {
             <Route path="sales/new" element={<CreateSale />} />
             <Route path="sales/:id" element={<SaleDetail />} />
             <Route path="sales/:id/edit" element={<CreateSale />} />
+            <Route path="sales/:id/delivery" element={<DeliveryView />} />  {/* NEW */}
           </Route>
         </Routes>
       </BrowserRouter>
