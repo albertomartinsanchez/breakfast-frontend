@@ -68,7 +68,7 @@ export default function SaleDetail() {
 
   const getStatusBadge = (status) => {
     const badges = {
-      draft: { label: 'Draft', className: 'status-draft' },
+      draft: { label: 'Open', className: 'status-draft' },
       closed: { label: 'Closed', className: 'status-closed' },
       in_progress: { label: 'In Progress', className: 'status-in-progress' },
       completed: { label: 'Completed', className: 'status-completed' }
