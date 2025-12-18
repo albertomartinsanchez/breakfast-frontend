@@ -76,15 +76,17 @@ export const api = {
   updateSale: (id, data) => request(`/sales/${id}`, { method: 'PUT', body: data }),
   deleteSale: (id) => request(`/sales/${id}`, { method: 'DELETE' }),
   
-  // Phase 1: Delivery Management
   updateSaleStatus: (id, data) => request(`/sales/${id}`, { method: 'PATCH', body: data }),
   getSaleState: (id) => request(`/sales/${id}/state`),
   startDelivery: (id) => request(`/sales/${id}/delivery`, { method: 'POST' }),
   getDeliveryRoute: (id) => request(`/sales/${id}/delivery`),
   updateDeliveryRoute: (id, route) => request(`/sales/${id}/delivery`, { method: 'PATCH', body: { route } }),
   getDeliveryProgress: (id) => request(`/sales/${id}/delivery/progress`),
-  updateDeliveryStatus: (saleId, customerId, data) => 
-    request(`/sales/${saleId}/delivery/customers/${customerId}/status`, { method: 'PATCH', body: data }),
+  updateDeliveryStatus: (saleId, customerId, data) => request(`/sales/${saleId}/delivery/customers/${customerId}/status`, { method: 'PATCH', body: data }),
+
+  getCustomerAnalytics: (id, params = '') => request(`/customers/${id}/analytics?${params}`),
+  getProductAnalytics: (id, params = '') => request(`/products/${id}/analytics?${params}`),
+  getDashboardAnalytics: (params = '') => request(`/analytics/dashboard?${params}`),  
 }
 
 export { ApiError }

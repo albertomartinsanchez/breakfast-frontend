@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { LayoutDashboard, Package, Users, ShoppingCart, LogOut, Menu, X } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { BarChart3 } from 'lucide-react'
 import './Layout.css'
 
 export default function Layout() {
@@ -14,12 +15,13 @@ export default function Layout() {
     navigate('/login')
   }
 
-  const navItems = [
-    { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { to: '/products', icon: Package, label: 'Products' },
-    { to: '/customers', icon: Users, label: 'Customers' },
-    { to: '/sales', icon: ShoppingCart, label: 'Sales' },
-  ]
+const navItems = [
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/products', icon: Package, label: 'Products' },
+  { to: '/customers', icon: Users, label: 'Customers' },
+  { to: '/sales', icon: ShoppingCart, label: 'Sales' },
+  { to: '/analytics', icon: BarChart3, label: 'Analytics' },
+]
 
   return (
     <div className="layout">

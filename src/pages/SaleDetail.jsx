@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { ArrowLeft, Edit, Trash2, Calendar, DollarSign, TrendingUp, Lock, Unlock, Truck } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Calendar, DollarSign, TrendingUp, Lock, Unlock, Truck, FileText } from 'lucide-react'
 import { api } from '../services/api'
 import Card from '../components/Card'
 import Button from '../components/Button'
+import { generateSalePDF } from '../utils/salePDF'
 import './SaleDetail.css'
 
 export default function SaleDetail() {
@@ -11,6 +12,7 @@ export default function SaleDetail() {
   const navigate = useNavigate()
   const [sale, setSale] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [generatingPDF, setGeneratingPDF] = useState(false)
 
   useEffect(() => {
     loadSale()
@@ -66,6 +68,35 @@ export default function SaleDetail() {
     }
   }
 
+  const handleExportPDF = async () => {
+    setGeneratingPDF(true)
+    try {
+      // If sale is completed, fetch delivery data
+      let deliveryData = null
+      if (sale.status === 'completed' || sale.status === 'in_progress') {
+        try {
+          const [route, progress] = await Promise.all([
+            api.getDeliveryRoute(id),
+            api.getDeliveryProgress(id)
+          ])
+          deliveryData = {
+            ...progress,
+            deliveries: route
+          }
+        } catch (error) {
+          console.warn('Could not fetch delivery data:', error)
+        }
+      }
+      
+      await generateSalePDF(sale, deliveryData)
+    } catch (error) {
+      console.error('Failed to generate PDF:', error)
+      alert('Failed to generate PDF: ' + error.message)
+    } finally {
+      setGeneratingPDF(false)
+    }
+  }
+
   const getStatusBadge = (status) => {
     const badges = {
       draft: { label: 'Open', className: 'status-draft' },
@@ -85,6 +116,10 @@ export default function SaleDetail() {
       <div className="page-header">
         <Link to="/sales"><Button variant="secondary"><ArrowLeft size={16} /> Back to Sales</Button></Link>
         <div className="actions">
+          <Button variant="primary" onClick={handleExportPDF} disabled={generatingPDF}>
+            <FileText size={16} /> {generatingPDF ? 'Generating...' : 'Export PDF'}
+          </Button>
+          
           {sale.status === 'draft' && (
             <>
               <Link to={`/sales/${id}/edit`}><Button><Edit size={16} /> Edit</Button></Link>

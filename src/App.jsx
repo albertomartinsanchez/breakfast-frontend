@@ -11,7 +11,8 @@ import Customers from './pages/Customers'
 import Sales from './pages/Sales'
 import SaleDetail from './pages/SaleDetail'
 import CreateSale from './pages/CreateSale'
-import DeliveryView from './pages/DeliveryView'  // NEW
+import DeliveryView from './pages/DeliveryView'
+import Analytics from './pages/Analytics'
 
 function App() {
   return (
@@ -30,7 +31,8 @@ function App() {
             <Route path="sales/new" element={<CreateSale />} />
             <Route path="sales/:id" element={<SaleDetail />} />
             <Route path="sales/:id/edit" element={<CreateSale />} />
-            <Route path="sales/:id/delivery" element={<DeliveryView />} />  {/* NEW */}
+            <Route path="sales/:id/delivery" element={<DeliveryView />} />
+            <Route path="analytics" element={<Analytics />} />
           </Route>
         </Routes>
       </BrowserRouter>
