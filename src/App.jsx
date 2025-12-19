@@ -1,4 +1,3 @@
-import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -13,6 +12,7 @@ import SaleDetail from './pages/SaleDetail'
 import CreateSale from './pages/CreateSale'
 import DeliveryView from './pages/DeliveryView'
 import Analytics from './pages/Analytics'
+import PublicOrder from './pages/PublicOrder'
 
 function App() {
   return (
@@ -21,7 +21,8 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          
+          <Route path="/order/:token" element={<PublicOrder />} />
+
           <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />

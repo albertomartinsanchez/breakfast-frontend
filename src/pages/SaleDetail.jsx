@@ -6,6 +6,7 @@ import Card from '../components/Card'
 import Button from '../components/Button'
 import { generateSalePDF } from '../utils/salePDF'
 import './SaleDetail.css'
+import TokenManager from '../components/TokenManager'
 
 export default function SaleDetail() {
   const { id } = useParams()
@@ -116,6 +117,7 @@ export default function SaleDetail() {
       <div className="page-header">
         <Link to="/sales"><Button variant="secondary"><ArrowLeft size={16} /> Back to Sales</Button></Link>
         <div className="actions">
+          <TokenManager saleId={id} saleStatus={sale.status} />
           <Button variant="primary" onClick={handleExportPDF} disabled={generatingPDF}>
             <FileText size={16} /> {generatingPDF ? 'Generating...' : 'Export PDF'}
           </Button>

@@ -87,6 +87,10 @@ export const api = {
   getCustomerAnalytics: (id, params = '') => request(`/customers/${id}/analytics?${params}`),
   getProductAnalytics: (id, params = '') => request(`/products/${id}/analytics?${params}`),
   getDashboardAnalytics: (params = '') => request(`/analytics/dashboard?${params}`),  
+
+  // Token Management (Admin)
+  generateTokens: (saleId) => request(`/sales/${saleId}/generate-tokens`, { method: 'POST' }),
+  getSaleTokens: (saleId) => request(`/sales/${saleId}/tokens`),
 }
 
 export { ApiError }

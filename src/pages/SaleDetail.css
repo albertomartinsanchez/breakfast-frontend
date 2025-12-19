@@ -27,6 +27,32 @@
   align-items: center;
 }
 
+/* Make labels darker/more visible */
+.summary-item .label {
+  font-size: 0.75rem;
+  color: #666666;  /* Darker gray */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 600;
+}
+
+/* Make values darker */
+.summary-item .value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333333;  /* Dark gray/black */
+}
+
+/* Keep the colored values colored but darker */
+.summary-item .revenue {
+  color: #1976d2;  /* Darker blue */
+}
+
+.summary-item .profit {
+  color: #388e3c;  /* Darker green */
+}
+
 .summary-item svg {
   color: var(--color-primary);
 }
