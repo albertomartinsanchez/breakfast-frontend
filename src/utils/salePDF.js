@@ -108,6 +108,60 @@ export const generateSalePDF = async (sale, deliveryData = null) => {
     pdf.addSpace(5)
   })
 
+  // NEW: Product Summary at the bottom
+  pdf.addSpace(10)
+  pdf.addLine()
+  pdf.addSpace(5)
+  pdf.addSectionHeading('Product Summary')
+  
+  // Aggregate products across all customers
+  const productSummary = {}
+  
+  sale.customer_sales.forEach(cs => {
+    cs.products.forEach(p => {
+      if (!productSummary[p.product_name]) {
+        productSummary[p.product_name] = {
+          quantity: 0,
+          buy_price: p.buy_price_at_sale
+        }
+      }
+      productSummary[p.product_name].quantity += p.quantity
+    })
+  })
+  
+  // Sort by product name
+  const sortedProducts = Object.entries(productSummary).sort((a, b) => 
+    a[0].localeCompare(b[0])
+  )
+  
+  // Display product summary
+  sortedProducts.forEach(([productName, data]) => {
+    const totalCost = data.quantity * data.buy_price
+    pdf.addText(
+      `${data.quantity} x ${productName}     ${formatCurrency(totalCost)}`,
+      { 
+        fontSize: 10,
+        indent: 5
+      }
+    )
+    pdf.addSpace(2)
+  })
+  
+  // Total buy price
+  const totalBuyPrice = sortedProducts.reduce((sum, [_, data]) => 
+    sum + (data.quantity * data.buy_price), 0
+  )
+  
+  pdf.addSpace(3)
+  pdf.addText(
+    `Total Cost: ${formatCurrency(totalBuyPrice)}`,
+    { 
+      fontSize: 11,
+      bold: true,
+      color: '#d4a574'
+    }
+  )
+
   // Save
   pdf.save(`sale-${sale.id}-${sale.date}.pdf`)
 }

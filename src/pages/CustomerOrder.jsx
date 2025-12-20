@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, ShoppingCart, Plus, Minus, Save, CheckCircle, AlertCircle } from 'lucide-react'
 import './CustomerOrder.css'
+import DeliveryStatusCard from '../components/DeliveryStatusCard'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
@@ -13,10 +14,19 @@ export default function CustomerOrder() {
   const [cart, setCart] = useState({})
   const [saving, setSaving] = useState(false)
   const [saveMessage, setSaveMessage] = useState(null)
+  const [deliveryStatus, setDeliveryStatus] = useState(null)
 
   useEffect(() => {
     loadSaleData()
+    loadDeliveryStatus()
   }, [token, saleId])
+
+  useEffect(() => {
+    if (saleData?.sale_status === 'in_progress') {
+      const interval = setInterval(loadDeliveryStatus, 30000) // Poll every 30 seconds
+      return () => clearInterval(interval)
+    }
+  }, [saleData?.sale_status])
 
   const loadSaleData = async () => {
     try {
@@ -39,6 +49,18 @@ export default function CustomerOrder() {
       setLoading(false)
     }
   }
+
+  const loadDeliveryStatus = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/customer/${token}/sales/${saleId}/delivery-status`)
+    if (response.ok) {
+      const data = await response.json()
+      setDeliveryStatus(data)
+    }
+  } catch (err) {
+    console.error('Failed to load delivery status:', err)
+  }
+}
 
   const updateQuantity = (productId, change) => {
     setCart(prev => {
@@ -140,6 +162,8 @@ export default function CustomerOrder() {
         </div>
       </header>
 
+      <DeliveryStatusCard deliveryStatus={deliveryStatus} />
+      
       {saleData.message && (
         <div className={`message-banner ${saleData.is_open ? 'info' : 'warning'}`}>
           <AlertCircle size={20} />
