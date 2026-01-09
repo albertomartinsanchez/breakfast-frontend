@@ -142,9 +142,7 @@ export default function SaleDetail() {
               <Button variant="secondary"><Truck size={16} /> View Delivery</Button>
             </Link>
           )}
-          {sale.status === 'draft' && (
-            <Button variant="danger" onClick={handleDelete}><Trash2 size={16} /> Delete</Button>
-          )}
+          <Button variant="danger" onClick={handleDelete}><Trash2 size={16} /> Delete</Button>
         </div>
       </div>
 
