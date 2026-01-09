@@ -102,11 +102,11 @@ export default function Analytics() {
         </Card>
         <Card className="summary-card">
           <div className="summary-label">Total Revenue</div>
-          <div className="summary-value revenue">${summary.total_revenue.toFixed(2)}</div>
+          <div className="summary-value revenue">€{summary.total_revenue.toFixed(2)}</div>
         </Card>
         <Card className="summary-card">
           <div className="summary-label">Total Profit</div>
-          <div className="summary-value profit">${summary.total_profit.toFixed(2)}</div>
+          <div className="summary-value profit">€{summary.total_profit.toFixed(2)}</div>
         </Card>
         <Card className="summary-card">
           <div className="summary-label">Profit Margin</div>
@@ -153,8 +153,8 @@ export default function Analytics() {
                 <tr key={idx}>
                   <td>{product.product_name}</td>
                   <td>{product.units_sold}</td>
-                  <td className="revenue">${product.revenue.toFixed(2)}</td>
-                  <td className="profit">${product.profit.toFixed(2)}</td>
+                  <td className="revenue">€{product.revenue.toFixed(2)}</td>
+                  <td className="profit">€{product.profit.toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
@@ -179,8 +179,8 @@ export default function Analytics() {
                 <tr key={idx}>
                   <td>{customer.customer_name}</td>
                   <td>{customer.orders}</td>
-                  <td className="revenue">${customer.revenue.toFixed(2)}</td>
-                  <td className="profit">${customer.profit.toFixed(2)}</td>
+                  <td className="revenue">€{customer.revenue.toFixed(2)}</td>
+                  <td className="profit">€{customer.profit.toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>

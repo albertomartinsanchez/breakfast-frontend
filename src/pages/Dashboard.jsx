@@ -43,8 +43,8 @@ export default function Dashboard() {
     { icon: Package, label: 'Products', value: stats.products, color: 'info', link: '/products' },
     { icon: Users, label: 'Customers', value: stats.customers, color: 'success', link: '/customers' },
     { icon: ShoppingCart, label: 'Sales', value: stats.sales, color: 'warning', link: '/sales' },
-    { icon: DollarSign, label: 'Revenue', value: `$${stats.revenue.toFixed(2)}`, color: 'primary', link: '/sales' },
-    { icon: TrendingUp, label: 'Profit', value: `$${stats.profit.toFixed(2)}`, color: 'primary', link: '/sales' },
+    { icon: DollarSign, label: 'Revenue', value: `€${stats.revenue.toFixed(2)}`, color: 'primary', link: '/sales' },
+    { icon: TrendingUp, label: 'Profit', value: `€${stats.profit.toFixed(2)}`, color: 'primary', link: '/sales' },
   ]
 
   if (loading) return <div>Loading...</div>

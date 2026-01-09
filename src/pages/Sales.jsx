@@ -71,7 +71,7 @@ export default function Sales() {
                   <div className="sale-info-left">
                     <div className="sale-date">
                       <Calendar size={18} />
-                      <span>{new Date(sale.date).toLocaleDateString()}</span>
+                      <span>{new Date(sale.date).toLocaleDateString('en-GB')}</span>
                     </div>
                     {getStatusBadge(sale.status)}
                   </div>
@@ -84,8 +84,8 @@ export default function Sales() {
                       <Package size={14} />
                       {totalProducts} products
                     </span>
-                    <span className="stat revenue">${sale.total_revenue.toFixed(2)}</span>
-                    <span className="stat profit">${sale.total_benefit.toFixed(2)} profit</span>
+                    <span className="stat revenue">€{sale.total_revenue.toFixed(2)}</span>
+                    <span className="stat profit">€{sale.total_benefit.toFixed(2)} profit</span>
                   </div>
                 </div>
                 <div className="sale-actions">

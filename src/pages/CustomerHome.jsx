@@ -97,12 +97,7 @@ export default function CustomerHome() {
                     <div className="sale-info">
                       <div className="sale-date">
                         <Calendar size={16} />
-                        {new Date(sale.date).toLocaleDateString('en-US', {
-                          weekday: 'long',
-                          month: 'long',
-                          day: 'numeric',
-                          year: 'numeric'
-                        })}
+                        {new Date(sale.date).toLocaleDateString('en-GB')}
                       </div>
                       <div className="sale-status open">{getStatusLabel(sale.status)}</div>
                     </div>
@@ -132,11 +127,7 @@ export default function CustomerHome() {
                     <div className="sale-info">
                       <div className="sale-date">
                         <Calendar size={16} />
-                        {new Date(sale.date).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric'
-                        })}
+                        {new Date(sale.date).toLocaleDateString('en-GB')}
                       </div>
                       <div className="sale-status closed">{getStatusLabel(sale.status)}</div>
                     </div>

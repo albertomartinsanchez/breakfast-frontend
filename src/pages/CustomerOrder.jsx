@@ -152,12 +152,7 @@ export default function CustomerOrder() {
           <h1>🥐 Place Your Order</h1>
           <div className="order-info">
             <p className="customer-name">{saleData.customer_name}</p>
-            <p className="sale-date">{new Date(saleData.sale_date).toLocaleDateString('en-US', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}</p>
+            <p className="sale-date">{new Date(saleData.sale_date).toLocaleDateString('en-GB')}</p>
           </div>
         </div>
       </header>
@@ -192,7 +187,7 @@ export default function CustomerOrder() {
                   {product.description && (
                     <p className="product-description">{product.description}</p>
                   )}
-                  <p className="product-price">${product.sell_price.toFixed(2)}</p>
+                  <p className="product-price">€{product.sell_price.toFixed(2)}</p>
                 </div>
                 
                 {saleData.is_open ? (
@@ -240,7 +235,7 @@ export default function CustomerOrder() {
               return (
                 <div key={productId} className="summary-item">
                   <span>{quantity}x {product.name}</span>
-                  <span>${(product.sell_price * quantity).toFixed(2)}</span>
+                  <span>€{(product.sell_price * quantity).toFixed(2)}</span>
                 </div>
               )
             })}
@@ -248,7 +243,7 @@ export default function CustomerOrder() {
           
           <div className="summary-total">
             <strong>Total:</strong>
-            <strong className="total-amount">${totalAmount.toFixed(2)}</strong>
+            <strong className="total-amount">€{totalAmount.toFixed(2)}</strong>
           </div>
           
           {saleData.is_open && (

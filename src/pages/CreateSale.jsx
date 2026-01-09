@@ -177,7 +177,7 @@ export default function CreateSale() {
                 }} className="product-select">
                   <option value="">Select product...</option>
                   {products.map(p => (
-                    <option key={p.id} value={p.id}>{p.name} - ${p.sell_price}</option>
+                    <option key={p.id} value={p.id}>{p.name} - €{p.sell_price}</option>
                   ))}
                 </select>
 
@@ -213,7 +213,7 @@ export default function CreateSale() {
         <div className="modal-overlay" onClick={closeQuantityModal}>
           <div className="quantity-modal" onClick={e => e.stopPropagation()}>
             <h3>Add {quantityModal.product?.name}</h3>
-            <p className="modal-price">${quantityModal.product?.sell_price} each</p>
+            <p className="modal-price">€{quantityModal.product?.sell_price} each</p>
 
             <div className="quantity-display">
               <button type="button" className="qty-adjust-btn" onClick={() => setModalQuantity(quantityModal.quantity - 1)}>−</button>

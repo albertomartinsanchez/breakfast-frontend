@@ -148,7 +148,7 @@ export default function SaleDetail() {
 
       <Card title={
         <div className="card-title-with-badge">
-          <span>Sale - {new Date(sale.date).toLocaleDateString()}</span>
+          <span>Sale - {new Date(sale.date).toLocaleDateString('en-GB')}</span>
           {getStatusBadge(sale.status)}
         </div>
       }>
@@ -157,21 +157,21 @@ export default function SaleDetail() {
             <Calendar size={20} />
             <div>
               <div className="label">Date</div>
-              <div className="value">{new Date(sale.date).toLocaleDateString()}</div>
+              <div className="value">{new Date(sale.date).toLocaleDateString('en-GB')}</div>
             </div>
           </div>
           <div className="summary-item">
             <DollarSign size={20} />
             <div>
               <div className="label">Total Revenue</div>
-              <div className="value revenue">${sale.total_revenue.toFixed(2)}</div>
+              <div className="value revenue">€{sale.total_revenue.toFixed(2)}</div>
             </div>
           </div>
           <div className="summary-item">
             <TrendingUp size={20} />
             <div>
               <div className="label">Total Profit</div>
-              <div className="value profit">${sale.total_benefit.toFixed(2)}</div>
+              <div className="value profit">€{sale.total_benefit.toFixed(2)}</div>
             </div>
           </div>
         </div>
@@ -183,8 +183,8 @@ export default function SaleDetail() {
               <div className="customer-header">
                 <h4>{cs.customer_name}</h4>
                 <div className="customer-totals">
-                  <span className="revenue">${cs.total_revenue.toFixed(2)}</span>
-                  <span className="profit">${cs.total_benefit.toFixed(2)} profit</span>
+                  <span className="revenue">€{cs.total_revenue.toFixed(2)}</span>
+                  <span className="profit">€{cs.total_benefit.toFixed(2)} profit</span>
                 </div>
               </div>
               <table className="products-table">
@@ -202,9 +202,9 @@ export default function SaleDetail() {
                     <tr key={pidx}>
                       <td>{p.product_name}</td>
                       <td>{p.quantity}</td>
-                      <td>${p.sell_price_at_sale.toFixed(2)}</td>
-                      <td>${(p.quantity * p.sell_price_at_sale).toFixed(2)}</td>
-                      <td className="profit">${p.benefit.toFixed(2)}</td>
+                      <td>€{p.sell_price_at_sale.toFixed(2)}</td>
+                      <td>€{(p.quantity * p.sell_price_at_sale).toFixed(2)}</td>
+                      <td className="profit">€{p.benefit.toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>

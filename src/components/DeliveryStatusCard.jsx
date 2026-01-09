@@ -23,7 +23,7 @@ export default function DeliveryStatusCard({ deliveryStatus }) {
           <h3>✅ Delivered!</h3>
           <p>Your order was delivered at {new Date(deliveryStatus.completed_at).toLocaleTimeString()}</p>
           {deliveryStatus.amount_collected && (
-            <p className="amount">Amount paid: ${deliveryStatus.amount_collected.toFixed(2)}</p>
+            <p className="amount">Amount paid: €{deliveryStatus.amount_collected.toFixed(2)}</p>
           )}
         </div>
       </div>

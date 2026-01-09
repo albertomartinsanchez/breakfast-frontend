@@ -121,7 +121,7 @@ export default function RouteManager({ saleId, isOpen, onClose, onSave }) {
                   <div className="route-number">{index + 1}</div>
                   <div className="route-info">
                     <strong>{customer.customer_name}</strong>
-                    <span className="route-amount">${customer.total_amount.toFixed(2)}</span>
+                    <span className="route-amount">€{customer.total_amount.toFixed(2)}</span>
                   </div>
                   <div className="route-controls">
                     <button
