@@ -163,7 +163,7 @@ export default function DeliveryView() {
           <div className="stat">
             <DollarSign size={20} />
             <div>
-              <div className="stat-value">${progress?.total_collected.toFixed(2) || '0.00'}</div>
+              <div className="stat-value">€{progress?.total_collected.toFixed(2) || '0.00'}</div>
               <div className="stat-label">Collected</div>
             </div>
           </div>
@@ -179,7 +179,7 @@ export default function DeliveryView() {
         {progress?.skipped_count > 0 && (
           <div className="warning-box">
             <AlertCircle size={16} />
-            <span>${progress.total_skipped_amount.toFixed(2)} lost from skipped deliveries</span>
+            <span>€{progress.total_skipped_amount.toFixed(2)} lost from skipped deliveries</span>
           </div>
         )}
       </Card>
@@ -195,14 +195,14 @@ export default function DeliveryView() {
             {currentDelivery.items.map((item, idx) => (
               <div key={idx} className="item-row">
                 <span className="item-name">{item.quantity}x {item.product_name}</span>
-                <span className="item-price">${(item.sell_price_at_sale * item.quantity).toFixed(2)}</span>
+                <span className="item-price">€{(item.sell_price_at_sale * item.quantity).toFixed(2)}</span>
               </div>
             ))}
           </div>
 
           <div className="delivery-total">
             <strong>Total to collect:</strong>
-            <strong className="total-amount">${currentDelivery.total_amount.toFixed(2)}</strong>
+            <strong className="total-amount">€{currentDelivery.total_amount.toFixed(2)}</strong>
           </div>
 
           <div className="delivery-actions">
@@ -232,12 +232,12 @@ export default function DeliveryView() {
             </div>
             <div className="final-stat">
               <span className="label">Total Collected:</span>
-              <span className="value success">${progress.total_collected.toFixed(2)}</span>
+              <span className="value success">€{progress.total_collected.toFixed(2)}</span>
             </div>
             {progress.skipped_count > 0 && (
               <div className="final-stat warning">
                 <span className="label">Lost from Skips:</span>
-                <span className="value">${progress.total_skipped_amount.toFixed(2)}</span>
+                <span className="value">€{progress.total_skipped_amount.toFixed(2)}</span>
               </div>
             )}
           </div>
@@ -253,7 +253,7 @@ export default function DeliveryView() {
                 <div className="upcoming-number">{index + 1}</div>
                 <div className="upcoming-info">
                   <strong>{delivery.customer_name}</strong>
-                  <span className="upcoming-amount">${delivery.total_amount.toFixed(2)}</span>
+                  <span className="upcoming-amount">€{delivery.total_amount.toFixed(2)}</span>
                 </div>
               </div>
             ))}
@@ -279,7 +279,7 @@ export default function DeliveryView() {
                     </span>
                   </div>
                   <div className="completed-actions">
-                    <span className="completed-amount">${delivery.amount_collected.toFixed(2)}</span>
+                    <span className="completed-amount">€{delivery.amount_collected.toFixed(2)}</span>
                     {!isCompleted && (
                       <Button 
                         variant="secondary" 
@@ -313,7 +313,7 @@ export default function DeliveryView() {
                     <span className="skipped-reason">{delivery.skip_reason}</span>
                   </div>
                   <div className="skipped-actions">
-                    <span className="skipped-amount">-${delivery.total_amount.toFixed(2)}</span>
+                    <span className="skipped-amount">-€{delivery.total_amount.toFixed(2)}</span>
                     {!isCompleted && (
                       <Button 
                         variant="secondary" 

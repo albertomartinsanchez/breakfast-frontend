@@ -176,7 +176,8 @@ export class PDFGenerator {
       )
       
       // Generated date
-      const date = new Date().toLocaleDateString()
+      const d = new Date()
+      const date = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`
       this.doc.text(
         `Generated: ${date}`,
         this.pageWidth - this.margin,
@@ -201,14 +202,14 @@ export class PDFGenerator {
 
 // Helper function to format currency
 export const formatCurrency = (amount) => {
-  return `$${amount.toFixed(2)}`
+  return `€${amount.toFixed(2)}`
 }
 
-// Helper function to format date
+// Helper function to format date as dd/mm/yyyy
 export const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
+  const date = new Date(dateString)
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const year = date.getFullYear()
+  return `${day}/${month}/${year}`
 }

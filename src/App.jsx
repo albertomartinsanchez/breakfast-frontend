@@ -13,15 +13,23 @@ import SaleDetail from './pages/SaleDetail'
 import CreateSale from './pages/CreateSale'
 import DeliveryView from './pages/DeliveryView'
 import Analytics from './pages/Analytics'
+import CustomerHome from './pages/CustomerHome'
+import CustomerOrder from './pages/CustomerOrder'
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          {/* Public customer routes - NO authentication required */}
+          <Route path="/customer/:token" element={<CustomerHome />} />
+          <Route path="/customer/:token/sale/:saleId" element={<CustomerOrder />} />
+          
+          {/* Admin authentication routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           
+          {/* Admin protected routes */}
           <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />

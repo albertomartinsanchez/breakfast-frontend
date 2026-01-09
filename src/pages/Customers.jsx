@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Plus, Edit, Trash2 } from 'lucide-react'
+import { Plus, Edit, Trash2, ExternalLink } from 'lucide-react'
 import { api } from '../services/api'
 import Card from '../components/Card'
 import Button from '../components/Button'
@@ -81,6 +81,13 @@ export default function Customers() {
     }
   }
 
+  const openCustomerPage = (customer) => {
+    if (customer.access_token && customer.access_token.access_token) {
+      const url = `/customer/${customer.access_token.access_token}`
+      window.open(url, '_blank')
+    }
+  }
+
   if (loading) return <div>Loading...</div>
 
   return (
@@ -111,6 +118,15 @@ export default function Customers() {
                   <td>{customer.phone || '-'}</td>
                   <td>
                     <div className="actions">
+                      {customer.access_token && (
+                        <button 
+                          onClick={() => openCustomerPage(customer)} 
+                          className="action-btn success"
+                          title="View customer page"
+                        >
+                          <ExternalLink size={16} />
+                        </button>
+                      )}
                       <button onClick={() => openModal(customer)} className="action-btn"><Edit size={16} /></button>
                       <button onClick={() => handleDelete(customer.id)} className="action-btn danger"><Trash2 size={16} /></button>
                     </div>

@@ -117,9 +117,9 @@ export default function Products() {
                 <tr key={product.id}>
                   <td><strong>{product.name}</strong></td>
                   <td>{product.description || '-'}</td>
-                  <td>${product.buy_price.toFixed(2)}</td>
-                  <td>${product.sell_price.toFixed(2)}</td>
-                  <td className="profit">${(product.sell_price - product.buy_price).toFixed(2)}</td>
+                  <td>€{product.buy_price.toFixed(2)}</td>
+                  <td>€{product.sell_price.toFixed(2)}</td>
+                  <td className="profit">€{(product.sell_price - product.buy_price).toFixed(2)}</td>
                   <td>
                     <div className="actions">
                       <button onClick={() => openModal(product)} className="action-btn"><Edit size={16} /></button>

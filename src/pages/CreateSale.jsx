@@ -6,6 +6,7 @@ import Card from '../components/Card'
 import Button from '../components/Button'
 import Input from '../components/Input'
 import SearchInput from '../components/SearchInput'
+import './CreateSale.css'
 
 export default function CreateSale() {
   const { id } = useParams()
@@ -17,6 +18,7 @@ export default function CreateSale() {
   const [selectedCustomers, setSelectedCustomers] = useState([])
   const [customerSearch, setCustomerSearch] = useState('')
   const [error, setError] = useState('')
+  const [quantityModal, setQuantityModal] = useState({ open: false, customerIndex: null, product: null, quantity: 1 })
 
   useEffect(() => {
     loadData()
@@ -54,7 +56,7 @@ export default function CreateSale() {
 
   const addCustomer = (customer) => {
     if (selectedCustomers.find(sc => sc.customer.id === customer.id)) return
-    setSelectedCustomers([...selectedCustomers, { customer, products: [] }])
+    setSelectedCustomers([{ customer, products: [] }, ...selectedCustomers])
     setCustomerSearch('')
   }
 
@@ -62,12 +64,25 @@ export default function CreateSale() {
     setSelectedCustomers(selectedCustomers.filter(sc => sc.customer.id !== customerId))
   }
 
-  const addProduct = (customerIndex, product) => {
+  const openQuantityModal = (customerIndex, product) => {
+    if (selectedCustomers[customerIndex].products.find(p => p.product_id === product.id)) return
+    setQuantityModal({ open: true, customerIndex, product, quantity: 1 })
+  }
+
+  const confirmAddProduct = () => {
+    const { customerIndex, product, quantity } = quantityModal
     const updated = [...selectedCustomers]
-    if (!updated[customerIndex].products.find(p => p.product_id === product.id)) {
-      updated[customerIndex].products.push({ product_id: product.id, quantity: 1, product })
-      setSelectedCustomers(updated)
-    }
+    updated[customerIndex].products.push({ product_id: product.id, quantity, product })
+    setSelectedCustomers(updated)
+    setQuantityModal({ open: false, customerIndex: null, product: null, quantity: 1 })
+  }
+
+  const closeQuantityModal = () => {
+    setQuantityModal({ open: false, customerIndex: null, product: null, quantity: 1 })
+  }
+
+  const setModalQuantity = (qty) => {
+    setQuantityModal(prev => ({ ...prev, quantity: Math.max(1, qty) }))
   }
 
   const updateQuantity = (customerIndex, productIndex, quantity) => {
@@ -157,12 +172,12 @@ export default function CreateSale() {
               <div className="products-section">
                 <select onChange={(e) => {
                   const product = products.find(p => p.id === parseInt(e.target.value))
-                  if (product) addProduct(cidx, product)
+                  if (product) openQuantityModal(cidx, product)
                   e.target.value = ''
                 }} className="product-select">
                   <option value="">Select product...</option>
                   {products.map(p => (
-                    <option key={p.id} value={p.id}>{p.name} - ${p.sell_price}</option>
+                    <option key={p.id} value={p.id}>{p.name} - €{p.sell_price}</option>
                   ))}
                 </select>
 
@@ -194,23 +209,38 @@ export default function CreateSale() {
         </form>
       </Card>
 
-      <style>{`
-        .page-header { margin-bottom: var(--spacing-xl); }
-        .error-message { padding: var(--spacing-md); background: var(--color-danger-bg); color: var(--color-danger); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg); }
-        .search-results { background: var(--color-surface-hover); border: 1px solid var(--color-border); border-radius: var(--radius-md); margin-top: var(--spacing-sm); max-height: 200px; overflow-y: auto; }
-        .search-result-item { padding: var(--spacing-md); cursor: pointer; border-bottom: 1px solid var(--color-border); }
-        .search-result-item:hover { background: var(--color-surface); }
-        .customer-block { background: var(--color-surface-hover); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--spacing-lg); margin-bottom: var(--spacing-md); }
-        .customer-block-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md); }
-        .customer-block-header h4 { margin: 0; }
-        .remove-btn { background: var(--color-danger-bg); color: var(--color-danger); padding: var(--spacing-xs); border-radius: var(--radius-sm); }
-        .remove-btn:hover { background: var(--color-danger); color: white; }
-        .product-select { width: 100%; padding: var(--spacing-md); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text); margin-bottom: var(--spacing-md); }
-        .selected-products { display: flex; flex-direction: column; gap: var(--spacing-sm); }
-        .product-item { display: flex; align-items: center; gap: var(--spacing-md); background: var(--color-surface); padding: var(--spacing-md); border-radius: var(--radius-sm); }
-        .product-item span { flex: 1; }
-        .quantity-input { width: 80px; padding: var(--spacing-sm); background: var(--color-surface-hover); border: 1px solid var(--color-border); border-radius: var(--radius-sm); color: var(--color-text); }
-      `}</style>
+      {quantityModal.open && (
+        <div className="modal-overlay" onClick={closeQuantityModal}>
+          <div className="quantity-modal" onClick={e => e.stopPropagation()}>
+            <h3>Add {quantityModal.product?.name}</h3>
+            <p className="modal-price">€{quantityModal.product?.sell_price} each</p>
+
+            <div className="quantity-display">
+              <button type="button" className="qty-adjust-btn" onClick={() => setModalQuantity(quantityModal.quantity - 1)}>−</button>
+              <span className="qty-value">{quantityModal.quantity}</span>
+              <button type="button" className="qty-adjust-btn" onClick={() => setModalQuantity(quantityModal.quantity + 1)}>+</button>
+            </div>
+
+            <div className="quick-qty-buttons">
+              {[1, 2, 3, 4, 5, 10].map(qty => (
+                <button
+                  key={qty}
+                  type="button"
+                  className={`quick-qty-btn ${quantityModal.quantity === qty ? 'active' : ''}`}
+                  onClick={() => setModalQuantity(qty)}
+                >
+                  {qty}
+                </button>
+              ))}
+            </div>
+
+            <div className="modal-actions">
+              <Button type="button" variant="secondary" onClick={closeQuantityModal}>Cancel</Button>
+              <Button type="button" variant="primary" onClick={confirmAddProduct}>Add</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

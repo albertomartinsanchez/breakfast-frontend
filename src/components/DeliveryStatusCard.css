@@ -1,0 +1,139 @@
+.delivery-status-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  border: 2px solid;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.delivery-status-card.in-progress {
+  background: #fff9e6;
+  border-color: #f57f17;
+  color: #e65100;
+}
+
+.delivery-status-card.completed {
+  background: #e8f5e9;
+  border-color: #4caf50;
+  color: #2e7d32;
+}
+
+.delivery-status-card.skipped {
+  background: #f5f5f5;
+  border-color: #9e9e9e;
+  color: #666;
+}
+
+.status-icon {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.in-progress .status-icon {
+  background: #ffecb3;
+  color: #f57f17;
+}
+
+.completed .status-icon {
+  background: #c8e6c9;
+  color: #2e7d32;
+}
+
+.skipped .status-icon {
+  background: #e0e0e0;
+  color: #666;
+}
+
+.status-icon.pulsing {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+.status-content {
+  flex: 1;
+}
+
+.status-content h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.status-content p {
+  margin: 0.25rem 0;
+  font-size: 0.95rem;
+}
+
+.amount {
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.delivery-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.eta {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(245, 127, 23, 0.1);
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .delivery-status-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .status-icon {
+    width: 56px;
+    height: 56px;
+  }
+  
+  .info-item {
+    justify-content: center;
+  }
+}

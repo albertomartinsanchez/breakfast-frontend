@@ -1,0 +1,255 @@
+.customer-home {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fff8e1 0%, #fff 50%, #fff8e1 100%);
+  padding-bottom: 2rem;
+}
+
+.customer-header {
+  background: linear-gradient(135deg, #d4a574 0%, #e0b889 100%);
+  color: #0a0e0f;
+  padding: 2.5rem 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.customer-header h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.sales-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.sales-section {
+  margin-bottom: 3rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  margin: 0 0 1.5rem 0;
+  color: #333;
+}
+
+.sales-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.sale-card {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sale-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.sale-card-open {
+  border-color: #d4a574;
+  background: #fffbf5;
+}
+
+.sale-card-open:hover {
+  border-color: #b8884d;
+  box-shadow: 0 4px 16px rgba(212, 165, 116, 0.3);
+}
+
+.sale-card-closed {
+  opacity: 0.7;
+}
+
+.sale-card-closed:hover {
+  opacity: 1;
+}
+
+.sale-header {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.sale-icon {
+  width: 48px;
+  height: 48px;
+  background: #f5f5f5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d4a574;
+  flex-shrink: 0;
+}
+
+.sale-card-open .sale-icon {
+  background: #d4a574;
+  color: white;
+}
+
+.sale-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sale-date {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.sale-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.sale-status.open {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #4caf50;
+}
+
+.sale-status.closed {
+  background: #f5f5f5;
+  color: #757575;
+  border: 1px solid #ccc;
+}
+
+.sale-action {
+  padding-top: 0.5rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.action-text {
+  color: #d4a574;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.sale-card-open .action-text {
+  color: #b8884d;
+}
+
+/* Loading */
+.customer-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #fff8e1 0%, #fff 50%, #fff8e1 100%);
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #d4a574;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.customer-loading p {
+  margin-top: 1rem;
+  color: #666;
+}
+
+/* Error */
+.customer-error {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #fff8e1 0%, #fff 50%, #fff8e1 100%);
+  text-align: center;
+}
+
+.customer-error svg {
+  color: #f44336;
+  margin-bottom: 1rem;
+}
+
+.customer-error h2 {
+  color: #333;
+  margin: 0 0 1rem 0;
+}
+
+.customer-error p {
+  color: #666;
+  margin: 0;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #999;
+}
+
+.empty-state svg {
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.empty-state p {
+  margin: 0.5rem 0;
+  font-size: 1.125rem;
+}
+
+.empty-hint {
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .customer-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .sales-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .sale-card {
+    padding: 1.25rem;
+  }
+}

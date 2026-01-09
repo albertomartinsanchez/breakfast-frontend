@@ -1,0 +1,206 @@
+.page-header {
+  margin-bottom: var(--spacing-xl);
+}
+
+.error-message {
+  padding: var(--spacing-md);
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.search-results {
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-top: var(--spacing-sm);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.search-result-item {
+  padding: var(--spacing-md);
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.search-result-item:hover {
+  background: var(--color-surface);
+}
+
+.customer-block {
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.customer-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.customer-block-header h4 {
+  margin: 0;
+}
+
+.remove-btn {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+}
+
+.remove-btn:hover {
+  background: var(--color-danger);
+  color: white;
+}
+
+.product-select {
+  width: 100%;
+  padding: var(--spacing-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  margin-bottom: var(--spacing-md);
+}
+
+.selected-products {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.product-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  background: var(--color-surface);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-sm);
+}
+
+.product-item span {
+  flex: 1;
+}
+
+.quantity-input {
+  width: 80px;
+  padding: var(--spacing-sm);
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+}
+
+/* Quantity Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--spacing-md);
+}
+
+.quantity-modal {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  width: 100%;
+  max-width: 320px;
+  text-align: center;
+}
+
+.quantity-modal h3 {
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.modal-price {
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+.quantity-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.qty-adjust-btn {
+  width: 48px;
+  height: 48px;
+  font-size: 24px;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  color: var(--color-text);
+}
+
+.qty-adjust-btn:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+.qty-adjust-btn:active {
+  transform: scale(0.95);
+}
+
+.qty-value {
+  font-size: 32px;
+  font-weight: 600;
+  min-width: 60px;
+}
+
+.quick-qty-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.quick-qty-btn {
+  padding: var(--spacing-md);
+  font-size: 18px;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  color: var(--color-text);
+  transition: all 0.15s;
+}
+
+.quick-qty-btn:hover {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.quick-qty-btn.active {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.modal-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+}
+
+.modal-actions button {
+  flex: 1;
+}
