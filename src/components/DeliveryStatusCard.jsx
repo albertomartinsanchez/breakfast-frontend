@@ -20,10 +20,10 @@ export default function DeliveryStatusCard({ deliveryStatus }) {
           <CheckCircle size={32} />
         </div>
         <div className="status-content">
-          <h3>✅ Delivered!</h3>
-          <p>Your order was delivered at {new Date(deliveryStatus.completed_at).toLocaleTimeString()}</p>
+          <h3>✅ ¡Entregado!</h3>
+          <p>Tu pedido fue entregado a las {new Date(deliveryStatus.completed_at).toLocaleTimeString('es-ES')}</p>
           {deliveryStatus.amount_collected && (
-            <p className="amount">Amount paid: €{deliveryStatus.amount_collected.toFixed(2)}</p>
+            <p className="amount">Importe pagado: €{deliveryStatus.amount_collected.toFixed(2)}</p>
           )}
         </div>
       </div>
@@ -38,9 +38,9 @@ export default function DeliveryStatusCard({ deliveryStatus }) {
           <XCircle size={32} />
         </div>
         <div className="status-content">
-          <h3>⊘ Delivery Skipped</h3>
+          <h3>⊘ Entrega omitida</h3>
           {deliveryStatus.skip_reason && (
-            <p>Reason: {deliveryStatus.skip_reason}</p>
+            <p>Motivo: {deliveryStatus.skip_reason}</p>
           )}
         </div>
       </div>
@@ -55,26 +55,26 @@ export default function DeliveryStatusCard({ deliveryStatus }) {
           <Truck size={32} />
         </div>
         <div className="status-content">
-          <h3>🚚 Out for Delivery!</h3>
-          
+          <h3>🚚 ¡En reparto!</h3>
+
           <div className="delivery-info">
             <div className="info-item">
               <MapPin size={18} />
-              <span>Position #{deliveryStatus.position_in_queue} in queue</span>
+              <span>Posición #{deliveryStatus.position_in_queue} en la cola</span>
             </div>
-            
+
             <div className="info-item">
               <Clock size={18} />
               <span>
-                {deliveryStatus.deliveries_ahead > 0 
-                  ? `${deliveryStatus.deliveries_ahead} deliveries ahead` 
-                  : 'You\'re next!'}
+                {deliveryStatus.deliveries_ahead > 0
+                  ? `${deliveryStatus.deliveries_ahead} entregas por delante`
+                  : '¡Eres el siguiente!'}
               </span>
             </div>
-            
+
             {deliveryStatus.estimated_minutes && (
               <div className="eta">
-                Estimated arrival: ~{deliveryStatus.estimated_minutes} minutes
+                Llegada estimada: ~{deliveryStatus.estimated_minutes} minutos
               </div>
             )}
           </div>
