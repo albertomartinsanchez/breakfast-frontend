@@ -86,7 +86,12 @@ export const api = {
 
   getCustomerAnalytics: (id, params = '') => request(`/customers/${id}/analytics?${params}`),
   getProductAnalytics: (id, params = '') => request(`/products/${id}/analytics?${params}`),
-  getDashboardAnalytics: (params = '') => request(`/analytics/dashboard?${params}`),  
+  getDashboardAnalytics: (params = '') => request(`/analytics/dashboard?${params}`),
+  
+  getCustomerByToken: (token) => request(`/customer/${token}`, { skipAuth: true }),
+  getCustomerSale: (token, saleId) => request(`/customer/${token}/sales/${saleId}`, { skipAuth: true }),
+  getCustomerSaleDeliveryStatus: (token, saleId) => request(`/customer/${token}/sales/${saleId}/delivery-status`, { skipAuth: true }),
+  updateCustomerOrder: (token, saleId, items) => request(`/customer/${token}/sales/${saleId}/order`, { method: 'PUT', body: { items }, skipAuth: true }),
 }
 
 export { ApiError }

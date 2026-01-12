@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Calendar, ShoppingCart, CheckCircle, XCircle, Truck, Package } from 'lucide-react'
+import { api } from '../services/api.js'
 import './CustomerHome.css'
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
 export default function CustomerHome() {
   const { token } = useParams()
@@ -17,10 +16,7 @@ export default function CustomerHome() {
 
   const loadCustomerData = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/customer/${token}`)
-      if (!response.ok) throw new Error('Invalid customer link')
-      
-      const data = await response.json()
+      const data = await api.getCustomerByToken(token)
       setCustomer(data)
     } catch (err) {
       setError(err.message)

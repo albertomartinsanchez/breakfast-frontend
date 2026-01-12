@@ -3,8 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, ShoppingCart, Plus, Minus, Save, CheckCircle, AlertCircle } from 'lucide-react'
 import './CustomerOrder.css'
 import DeliveryStatusCard from '../components/DeliveryStatusCard'
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+import { api } from '../services/api.js'
 
 export default function CustomerOrder() {
   const { token, saleId } = useParams()
@@ -30,10 +29,7 @@ export default function CustomerOrder() {
 
   const loadSaleData = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/customer/${token}/sales/${saleId}`)
-      if (!response.ok) throw new Error('Failed to load sale')
-      
-      const data = await response.json()
+      const data = await api.getCustomerSale(token, saleId)
       setSaleData(data)
       
       // Initialize cart with current order
@@ -52,11 +48,8 @@ export default function CustomerOrder() {
 
   const loadDeliveryStatus = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/customer/${token}/sales/${saleId}/delivery-status`)
-    if (response.ok) {
-      const data = await response.json()
-      setDeliveryStatus(data)
-    }
+    const data = await api.getCustomerSaleDeliveryStatus(token, saleId)
+    setDeliveryStatus(data)
   } catch (err) {
     console.error('Failed to load delivery status:', err)
   }
@@ -95,15 +88,7 @@ export default function CustomerOrder() {
         quantity
       }))
       
-      const response = await fetch(`${API_BASE_URL}/customer/${token}/sales/${saleId}/order`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items })
-      })
-      
-      if (!response.ok) throw new Error('Failed to save order')
-      
-      const result = await response.json()
+      const result = await api.updateCustomerOrder(token, saleId, items)
       setSaveMessage({ type: 'success', text: result.message })
       
       setTimeout(() => loadSaleData(), 1500)
