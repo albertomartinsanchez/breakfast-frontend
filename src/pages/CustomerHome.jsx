@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Calendar, ShoppingCart, CheckCircle, XCircle, Truck, Package } from 'lucide-react'
+import { api } from '../services/api.js'
 import './CustomerHome.css'
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
 export default function CustomerHome() {
   const { token } = useParams()
@@ -17,10 +16,7 @@ export default function CustomerHome() {
 
   const loadCustomerData = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/customer/${token}`)
-      if (!response.ok) throw new Error('Invalid customer link')
-      
-      const data = await response.json()
+      const data = await api.getCustomerByToken(token)
       setCustomer(data)
     } catch (err) {
       setError(err.message)
@@ -41,10 +37,10 @@ export default function CustomerHome() {
 
   const getStatusLabel = (status) => {
     switch (status) {
-      case 'draft': return 'Open for Orders'
-      case 'closed': return 'Closed'
-      case 'in_progress': return 'Out for Delivery'
-      case 'completed': return 'Delivered'
+      case 'draft': return 'Abierto para pedidos'
+      case 'closed': return 'Cerrado'
+      case 'in_progress': return 'En reparto'
+      case 'completed': return 'Entregado'
       default: return status
     }
   }
@@ -53,7 +49,7 @@ export default function CustomerHome() {
     return (
       <div className="customer-loading">
         <div className="spinner"></div>
-        <p>Loading your page...</p>
+        <p>Cargando tu página...</p>
       </div>
     )
   }
@@ -62,7 +58,7 @@ export default function CustomerHome() {
     return (
       <div className="customer-error">
         <XCircle size={48} />
-        <h2>Invalid Link</h2>
+        <h2>Enlace inválido</h2>
         <p>{error}</p>
       </div>
     )
@@ -75,8 +71,8 @@ export default function CustomerHome() {
     <div className="customer-home">
       <header className="customer-header">
         <div className="header-content">
-          <h1>🥐 {customer.customer_name}'s Orders</h1>
-          <p className="subtitle">Welcome! Select a sale below to place or view your order.</p>
+          <h1>🥐 Pedidos de {customer.customer_name}</h1>
+          <p className="subtitle">¡Bienvenido! Selecciona una venta para hacer o ver tu pedido.</p>
         </div>
       </header>
 
@@ -84,7 +80,7 @@ export default function CustomerHome() {
         {/* Open Sales */}
         {openSales.length > 0 && (
           <section className="sales-section">
-            <h2 className="section-title">📋 Open for Ordering</h2>
+            <h2 className="section-title">📋 Abiertos para pedir</h2>
             <div className="sales-grid">
               {openSales.map(sale => (
                 <Link
@@ -97,13 +93,13 @@ export default function CustomerHome() {
                     <div className="sale-info">
                       <div className="sale-date">
                         <Calendar size={16} />
-                        {new Date(sale.date).toLocaleDateString('en-GB')}
+                        {new Date(sale.date).toLocaleDateString('es-ES')}
                       </div>
                       <div className="sale-status open">{getStatusLabel(sale.status)}</div>
                     </div>
                   </div>
                   <div className="sale-action">
-                    <span className="action-text">Click to order →</span>
+                    <span className="action-text">Haz clic para pedir →</span>
                   </div>
                 </Link>
               ))}
@@ -114,7 +110,7 @@ export default function CustomerHome() {
         {/* Closed Sales */}
         {closedSales.length > 0 && (
           <section className="sales-section">
-            <h2 className="section-title">📦 Past Sales</h2>
+            <h2 className="section-title">📦 Ventas anteriores</h2>
             <div className="sales-grid">
               {closedSales.map(sale => (
                 <Link
@@ -127,13 +123,13 @@ export default function CustomerHome() {
                     <div className="sale-info">
                       <div className="sale-date">
                         <Calendar size={16} />
-                        {new Date(sale.date).toLocaleDateString('en-GB')}
+                        {new Date(sale.date).toLocaleDateString('es-ES')}
                       </div>
                       <div className="sale-status closed">{getStatusLabel(sale.status)}</div>
                     </div>
                   </div>
                   <div className="sale-action">
-                    <span className="action-text">View order →</span>
+                    <span className="action-text">Ver pedido →</span>
                   </div>
                 </Link>
               ))}
@@ -145,8 +141,8 @@ export default function CustomerHome() {
         {customer.sales.length === 0 && (
           <div className="empty-state">
             <Package size={64} />
-            <p>No sales yet</p>
-            <p className="empty-hint">Check back soon for new orders!</p>
+            <p>Aún no hay ventas</p>
+            <p className="empty-hint">¡Vuelve pronto para nuevos pedidos!</p>
           </div>
         )}
       </div>

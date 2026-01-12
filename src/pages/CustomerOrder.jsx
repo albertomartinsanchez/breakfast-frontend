@@ -3,8 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, ShoppingCart, Plus, Minus, Save, CheckCircle, AlertCircle } from 'lucide-react'
 import './CustomerOrder.css'
 import DeliveryStatusCard from '../components/DeliveryStatusCard'
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+import { api } from '../services/api.js'
 
 export default function CustomerOrder() {
   const { token, saleId } = useParams()
@@ -30,10 +29,7 @@ export default function CustomerOrder() {
 
   const loadSaleData = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/customer/${token}/sales/${saleId}`)
-      if (!response.ok) throw new Error('Failed to load sale')
-      
-      const data = await response.json()
+      const data = await api.getCustomerSale(token, saleId)
       setSaleData(data)
       
       // Initialize cart with current order
@@ -52,11 +48,8 @@ export default function CustomerOrder() {
 
   const loadDeliveryStatus = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/customer/${token}/sales/${saleId}/delivery-status`)
-    if (response.ok) {
-      const data = await response.json()
-      setDeliveryStatus(data)
-    }
+    const data = await api.getCustomerSaleDeliveryStatus(token, saleId)
+    setDeliveryStatus(data)
   } catch (err) {
     console.error('Failed to load delivery status:', err)
   }
@@ -95,15 +88,7 @@ export default function CustomerOrder() {
         quantity
       }))
       
-      const response = await fetch(`${API_BASE_URL}/customer/${token}/sales/${saleId}/order`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items })
-      })
-      
-      if (!response.ok) throw new Error('Failed to save order')
-      
-      const result = await response.json()
+      const result = await api.updateCustomerOrder(token, saleId, items)
       setSaveMessage({ type: 'success', text: result.message })
       
       setTimeout(() => loadSaleData(), 1500)
@@ -119,7 +104,7 @@ export default function CustomerOrder() {
     return (
       <div className="customer-loading">
         <div className="spinner"></div>
-        <p>Loading sale...</p>
+        <p>Cargando venta...</p>
       </div>
     )
   }
@@ -130,7 +115,7 @@ export default function CustomerOrder() {
         <AlertCircle size={48} />
         <h2>Error</h2>
         <p>{error}</p>
-        <Link to={`/customer/${token}`} className="back-link">← Back to your page</Link>
+        <Link to={`/customer/${token}`} className="back-link">← Volver a tu página</Link>
       </div>
     )
   }
@@ -147,12 +132,12 @@ export default function CustomerOrder() {
         <div className="header-content">
           <Link to={`/customer/${token}`} className="back-button">
             <ArrowLeft size={20} />
-            Back to Sales
+            Volver a ventas
           </Link>
-          <h1>🥐 Place Your Order</h1>
+          <h1>🥐 Haz tu pedido</h1>
           <div className="order-info">
             <p className="customer-name">{saleData.customer_name}</p>
-            <p className="sale-date">{new Date(saleData.sale_date).toLocaleDateString('en-GB')}</p>
+            <p className="sale-date">{new Date(saleData.sale_date).toLocaleDateString('es-ES')}</p>
           </div>
         </div>
       </header>
@@ -174,7 +159,7 @@ export default function CustomerOrder() {
       )}
 
       <div className="products-section">
-        <h2>Available Products</h2>
+        <h2>Productos disponibles</h2>
         <div className="products-grid">
           {saleData.available_products.map(product => {
             const quantity = cart[product.id] || 0
@@ -210,7 +195,7 @@ export default function CustomerOrder() {
                 ) : (
                   quantity > 0 && (
                     <div className="quantity-display">
-                      Quantity: {quantity}
+                      Cantidad: {quantity}
                     </div>
                   )
                 )}
@@ -224,7 +209,7 @@ export default function CustomerOrder() {
         <div className="cart-summary">
           <div className="summary-header">
             <ShoppingCart size={24} />
-            <h3>Your Order</h3>
+            <h3>Tu pedido</h3>
           </div>
           
           <div className="summary-items">
@@ -253,7 +238,7 @@ export default function CustomerOrder() {
               className="save-btn"
             >
               <Save size={20} />
-              {saving ? 'Saving...' : hasChanges ? 'Save Order' : 'No Changes'}
+              {saving ? 'Guardando...' : hasChanges ? 'Guardar pedido' : 'Sin cambios'}
             </button>
           )}
         </div>
@@ -262,8 +247,8 @@ export default function CustomerOrder() {
       {totalItems === 0 && saleData.current_order.length === 0 && saleData.is_open && (
         <div className="empty-cart">
           <ShoppingCart size={48} />
-          <p>Your cart is empty</p>
-          <p className="empty-hint">Add products above to start your order</p>
+          <p>Tu carrito está vacío</p>
+          <p className="empty-hint">Añade productos arriba para comenzar tu pedido</p>
         </div>
       )}
     </div>
