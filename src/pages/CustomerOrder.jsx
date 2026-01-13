@@ -4,6 +4,7 @@ import { ArrowLeft, ShoppingCart, Plus, Minus, Save, CheckCircle, AlertCircle, C
 import './CustomerOrder.css'
 import DeliveryStatusCard from '../components/DeliveryStatusCard'
 import { api } from '../services/api.js'
+import { t } from '../utils/translations.js'
 
 export default function CustomerOrder() {
   const { token, saleId } = useParams()
@@ -115,7 +116,7 @@ export default function CustomerOrder() {
       <div className="customer-error">
         <AlertCircle size={48} />
         <h2>Error</h2>
-        <p>{error}</p>
+        <p>{t(error)}</p>
         <Link to={`/customer/${token}`} className="back-link">← Volver a tu página</Link>
       </div>
     )
@@ -148,14 +149,14 @@ export default function CustomerOrder() {
       {saleData.message && (
         <div className={`message-banner ${saleData.is_open ? 'info' : 'warning'}`}>
           <AlertCircle size={20} />
-          <span>{saleData.message}</span>
+          <span>{t(saleData.message)}</span>
         </div>
       )}
 
       {saveMessage && (
         <div className={`save-message ${saveMessage.type}`}>
           {saveMessage.type === 'success' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
-          <span>{saveMessage.text}</span>
+          <span>{t(saveMessage.text)}</span>
         </div>
       )}
 

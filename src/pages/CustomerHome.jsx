@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Calendar, ShoppingCart, CheckCircle, XCircle, Truck, Package } from 'lucide-react'
 import { api } from '../services/api.js'
+import { t } from '../utils/translations.js'
 import './CustomerHome.css'
 
 export default function CustomerHome() {
@@ -59,7 +60,7 @@ export default function CustomerHome() {
       <div className="customer-error">
         <XCircle size={48} />
         <h2>Enlace inválido</h2>
-        <p>{error}</p>
+        <p>{t(error)}</p>
       </div>
     )
   }
