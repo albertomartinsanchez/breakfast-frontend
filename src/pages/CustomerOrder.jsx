@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, ShoppingCart, Plus, Minus, Save, CheckCircle, AlertCircle } from 'lucide-react'
+import { ArrowLeft, ShoppingCart, Plus, Minus, Save, CheckCircle, AlertCircle, ChevronUp, ChevronDown } from 'lucide-react'
 import './CustomerOrder.css'
 import DeliveryStatusCard from '../components/DeliveryStatusCard'
 import { api } from '../services/api.js'
@@ -14,6 +14,7 @@ export default function CustomerOrder() {
   const [saving, setSaving] = useState(false)
   const [saveMessage, setSaveMessage] = useState(null)
   const [deliveryStatus, setDeliveryStatus] = useState(null)
+  const [cartExpanded, setCartExpanded] = useState(false)
 
   useEffect(() => {
     loadSaleData()
@@ -206,31 +207,44 @@ export default function CustomerOrder() {
       </div>
 
       {(totalItems > 0 || saleData.current_order.length > 0) && (
-        <div className="cart-summary">
-          <div className="summary-header">
-            <ShoppingCart size={24} />
-            <h3>Tu pedido</h3>
-          </div>
-          
-          <div className="summary-items">
-            {Object.entries(cart).map(([productId, quantity]) => {
-              const product = saleData.available_products.find(p => p.id === parseInt(productId))
-              if (!product || quantity === 0) return null
-              
-              return (
-                <div key={productId} className="summary-item">
-                  <span>{quantity}x {product.name}</span>
-                  <span>€{(product.sell_price * quantity).toFixed(2)}</span>
-                </div>
-              )
-            })}
-          </div>
-          
-          <div className="summary-total">
-            <strong>Total:</strong>
-            <strong className="total-amount">€{totalAmount.toFixed(2)}</strong>
-          </div>
-          
+        <div className={`cart-summary ${cartExpanded ? 'expanded' : 'collapsed'}`}>
+          <button
+            className="summary-toggle"
+            onClick={() => setCartExpanded(!cartExpanded)}
+            aria-expanded={cartExpanded}
+          >
+            <div className="summary-toggle-content">
+              <ShoppingCart size={20} />
+              <span className="toggle-text">
+                {totalItems} {totalItems === 1 ? 'producto' : 'productos'} · <strong>€{totalAmount.toFixed(2)}</strong>
+              </span>
+            </div>
+            {cartExpanded ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
+          </button>
+
+          {cartExpanded && (
+            <div className="summary-details">
+              <div className="summary-items">
+                {Object.entries(cart).map(([productId, quantity]) => {
+                  const product = saleData.available_products.find(p => p.id === parseInt(productId))
+                  if (!product || quantity === 0) return null
+
+                  return (
+                    <div key={productId} className="summary-item">
+                      <span>{quantity}x {product.name}</span>
+                      <span>€{(product.sell_price * quantity).toFixed(2)}</span>
+                    </div>
+                  )
+                })}
+              </div>
+
+              <div className="summary-total">
+                <strong>Total:</strong>
+                <strong className="total-amount">€{totalAmount.toFixed(2)}</strong>
+              </div>
+            </div>
+          )}
+
           {saleData.is_open && (
             <button
               onClick={handleSaveOrder}
