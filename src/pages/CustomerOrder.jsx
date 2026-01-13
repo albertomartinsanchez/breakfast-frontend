@@ -22,12 +22,37 @@ export default function CustomerOrder() {
     loadDeliveryStatus()
   }, [token, saleId])
 
+  // SSE connection for real-time delivery status updates
   useEffect(() => {
-    if (saleData?.sale_status === 'in_progress') {
-      const interval = setInterval(loadDeliveryStatus, 30000) // Poll every 30 seconds
-      return () => clearInterval(interval)
+    if (saleData?.sale_status !== 'in_progress') {
+      return
     }
-  }, [saleData?.sale_status])
+
+    const streamUrl = api.getDeliveryStatusStreamUrl(token, saleId)
+    const eventSource = new EventSource(streamUrl)
+
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data)
+        if (data.error) {
+          console.error('SSE error:', data.error)
+          eventSource.close()
+          return
+        }
+        setDeliveryStatus(data)
+      } catch (err) {
+        console.error('Failed to parse SSE data:', err)
+      }
+    }
+
+    eventSource.onerror = () => {
+      console.error('SSE connection error, will auto-reconnect...')
+    }
+
+    return () => {
+      eventSource.close()
+    }
+  }, [saleData?.sale_status, token, saleId])
 
   const loadSaleData = async () => {
     try {
