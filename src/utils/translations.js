@@ -32,6 +32,12 @@ const translations = {
   [MESSAGE_CODES.ERROR_SALE_NOT_FOUND]: 'Venta no encontrada.',
   [MESSAGE_CODES.ERROR_SALE_CLOSED_NO_MODIFY]: 'Esta venta está cerrada y no se puede modificar.',
   [MESSAGE_CODES.ERROR_PRODUCT_NOT_FOUND]: 'Producto no encontrado.',
+
+  // Notification messages
+  delivery_started: '¡El reparto ha comenzado!',
+  track_your_order: 'Seguir tu pedido',
+  new_sale_available: '¡Nueva venta disponible!',
+  order_now: 'Pedir ahora',
 }
 
 /**

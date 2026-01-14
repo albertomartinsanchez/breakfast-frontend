@@ -93,8 +93,9 @@ export const api = {
   getCustomerSaleDeliveryStatus: (token, saleId) => request(`/customer/${token}/sales/${saleId}/delivery-status`, { skipAuth: true }),
   updateCustomerOrder: (token, saleId, items) => request(`/customer/${token}/sales/${saleId}/order`, { method: 'PUT', body: { items }, skipAuth: true }),
 
-  // SSE stream URL for real-time delivery status
+  // SSE stream URLs for real-time updates
   getDeliveryStatusStreamUrl: (token, saleId) => `${apiBaseUrl}/customer/${token}/sales/${saleId}/delivery-status/stream`,
+  getSalesStatusStreamUrl: (token) => `${apiBaseUrl}/customer/${token}/sales/status-stream`,
 }
 
 export { ApiError }
