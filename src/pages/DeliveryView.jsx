@@ -1,25 +1,21 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
-import { ArrowLeft, Check, SkipForward, Package, DollarSign, AlertCircle, ChevronDown, ChevronUp, MapPin, RotateCcw } from 'lucide-react'
+import { useParams, Link } from 'react-router-dom'
+import { ArrowLeft, Check, SkipForward, Package, DollarSign, AlertCircle, ChevronDown, ChevronUp, Navigation, RotateCcw } from 'lucide-react'
 import { api } from '../services/api'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import Modal from '../components/Modal'
-import RouteManager from '../components/RouteManager'
 import './DeliveryView.css'
 
 export default function DeliveryView() {
   const { id } = useParams()
-  const navigate = useNavigate()
   const [deliveries, setDeliveries] = useState([])
   const [progress, setProgress] = useState(null)
   const [loading, setLoading] = useState(true)
   const [showSkipModal, setShowSkipModal] = useState(false)
   const [skipReason, setSkipReason] = useState('')
-  const [selectedCustomer, setSelectedCustomer] = useState(null)
   const [showCompleted, setShowCompleted] = useState(false)
   const [showSkipped, setShowSkipped] = useState(false)
-  const [showRouteManager, setShowRouteManager] = useState(false)
   const [saleStatus, setSaleStatus] = useState(null)
 
   useEffect(() => {
@@ -52,18 +48,30 @@ export default function DeliveryView() {
     }
   }
 
-  const currentDelivery = deliveries.find(d => d.status === 'pending')
+  // Get the selected customer (is_next=true) from progress
+  const selectedCustomer = progress?.current_delivery || null
+  const pendingDeliveries = deliveries.filter(d => d.status === 'pending')
   const completedDeliveries = deliveries.filter(d => d.status === 'completed')
   const skippedDeliveries = deliveries.filter(d => d.status === 'skipped')
-  const upcomingDeliveries = deliveries.filter(d => d.status === 'pending' && d !== currentDelivery)
+
+  const handleSelectNext = async (customer) => {
+    try {
+      await api.updateDeliveryCustomer(id, customer.customer_id, {
+        is_next: true
+      })
+      await loadDeliveryData()
+    } catch (error) {
+      alert('Failed to select customer: ' + error.message)
+    }
+  }
 
   const handleComplete = async () => {
-    if (!currentDelivery) return
-    
+    if (!selectedCustomer) return
+
     try {
-      await api.updateDeliveryStatus(id, currentDelivery.customer_id, {
+      await api.updateDeliveryCustomer(id, selectedCustomer.customer_id, {
         status: 'completed',
-        amount_collected: currentDelivery.total_amount
+        amount_collected: selectedCustomer.total_amount
       })
       await loadDeliveryData()
       await loadSaleStatus()
@@ -78,14 +86,15 @@ export default function DeliveryView() {
       return
     }
 
+    if (!selectedCustomer) return
+
     try {
-      await api.updateDeliveryStatus(id, selectedCustomer.customer_id, {
+      await api.updateDeliveryCustomer(id, selectedCustomer.customer_id, {
         status: 'skipped',
         skip_reason: skipReason
       })
       setShowSkipModal(false)
       setSkipReason('')
-      setSelectedCustomer(null)
       await loadDeliveryData()
       await loadSaleStatus()
     } catch (error) {
@@ -93,11 +102,9 @@ export default function DeliveryView() {
     }
   }
 
-  const handleSetAsCurrent = async (customer) => {
-    if (!confirm(`Set ${customer.customer_name} as the current stop?`)) return
-    
+  const handleResetToPending = async (customer) => {
     try {
-      await api.updateDeliveryStatus(id, customer.customer_id, {
+      await api.updateDeliveryCustomer(id, customer.customer_id, {
         status: 'pending'
       })
       await loadDeliveryData()
@@ -105,16 +112,6 @@ export default function DeliveryView() {
     } catch (error) {
       alert('Failed to reset delivery: ' + error.message)
     }
-  }
-
-  const openSkipModal = (customer) => {
-    setSelectedCustomer(customer)
-    setShowSkipModal(true)
-  }
-
-  const handleRouteSaved = async () => {
-    await loadDeliveryData()
-    alert('Route updated successfully!')
   }
 
   if (loading) return <div>Loading...</div>
@@ -128,11 +125,6 @@ export default function DeliveryView() {
         <Link to={`/sales/${id}`}>
           <Button variant="secondary"><ArrowLeft size={16} /> Back to Sale</Button>
         </Link>
-        {!isCompleted && (
-          <Button variant="primary" onClick={() => setShowRouteManager(true)}>
-            <MapPin size={16} /> Manage Route
-          </Button>
-        )}
       </div>
 
       {/* Progress Header */}
@@ -168,7 +160,7 @@ export default function DeliveryView() {
             </div>
           </div>
         </div>
-        
+
         <div className="progress-bar-container">
           <div className="progress-bar">
             <div className="progress-fill" style={{ width: `${progressPercentage}%` }} />
@@ -184,15 +176,14 @@ export default function DeliveryView() {
         )}
       </Card>
 
-      {/* Current Delivery */}
-      {currentDelivery && (
+      {/* Selected Customer - Ready to Deliver */}
+      {selectedCustomer && (
         <Card className="current-delivery">
-          <div className="delivery-badge">CURRENT STOP</div>
-          <div className="sequence-number">#{currentDelivery.sequence_order}</div>
-          <h2>{currentDelivery.customer_name}</h2>
-          
+          <div className="delivery-badge">DELIVERING TO</div>
+          <h2>{selectedCustomer.customer_name}</h2>
+
           <div className="delivery-items">
-            {currentDelivery.items.map((item, idx) => (
+            {selectedCustomer.items.map((item, idx) => (
               <div key={idx} className="item-row">
                 <span className="item-name">{item.quantity}x {item.product_name}</span>
                 <span className="item-price">€{(item.sell_price_at_sale * item.quantity).toFixed(2)}</span>
@@ -202,22 +193,22 @@ export default function DeliveryView() {
 
           <div className="delivery-total">
             <strong>Total to collect:</strong>
-            <strong className="total-amount">€{currentDelivery.total_amount.toFixed(2)}</strong>
+            <strong className="total-amount">€{selectedCustomer.total_amount.toFixed(2)}</strong>
           </div>
 
           <div className="delivery-actions">
             <Button variant="success" onClick={handleComplete} fullWidth>
               <Check size={18} /> Mark as Delivered
             </Button>
-            <Button variant="danger" onClick={() => openSkipModal(currentDelivery)} fullWidth>
+            <Button variant="danger" onClick={() => setShowSkipModal(true)} fullWidth>
               <SkipForward size={18} /> Skip
             </Button>
           </div>
         </Card>
       )}
 
-      {/* No More Deliveries */}
-      {!currentDelivery && progress?.pending_count === 0 && (
+      {/* All Deliveries Complete */}
+      {pendingDeliveries.length === 0 && progress?.pending_count === 0 && (
         <Card className="delivery-complete">
           <div className="complete-icon">🎉</div>
           <h2>All Deliveries Complete!</h2>
@@ -244,19 +235,34 @@ export default function DeliveryView() {
         </Card>
       )}
 
-      {/* Upcoming Deliveries */}
-      {upcomingDeliveries.length > 0 && (
-        <Card title="Next Stops">
-          <div className="upcoming-list">
-            {upcomingDeliveries.map((delivery, index) => (
-              <div key={delivery.customer_id} className="upcoming-item">
-                <div className="upcoming-number">{index + 1}</div>
-                <div className="upcoming-info">
-                  <strong>{delivery.customer_name}</strong>
-                  <span className="upcoming-amount">€{delivery.total_amount.toFixed(2)}</span>
+      {/* Pending Deliveries - Pick Any */}
+      {pendingDeliveries.length > 0 && (
+        <Card title={selectedCustomer ? "Other Pending Deliveries" : "Select Next Delivery"}>
+          <div className="pending-grid">
+            {pendingDeliveries
+              .filter(d => !d.is_next)
+              .map((delivery) => (
+                <div key={delivery.customer_id} className="pending-card">
+                  <div className="pending-card-header">
+                    <strong>{delivery.customer_name}</strong>
+                    <span className="pending-amount">€{delivery.total_amount.toFixed(2)}</span>
+                  </div>
+                  <div className="pending-card-items">
+                    {delivery.items.map((item, idx) => (
+                      <span key={idx} className="pending-item">
+                        {item.quantity}x {item.product_name}
+                      </span>
+                    ))}
+                  </div>
+                  <Button
+                    variant="primary"
+                    onClick={() => handleSelectNext(delivery)}
+                    fullWidth
+                  >
+                    <Navigation size={16} /> Deliver Next
+                  </Button>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </Card>
       )}
@@ -281,9 +287,9 @@ export default function DeliveryView() {
                   <div className="completed-actions">
                     <span className="completed-amount">€{delivery.amount_collected.toFixed(2)}</span>
                     {!isCompleted && (
-                      <Button 
-                        variant="secondary" 
-                        onClick={() => handleSetAsCurrent(delivery)}
+                      <Button
+                        variant="secondary"
+                        onClick={() => handleResetToPending(delivery)}
                         style={{ marginLeft: 'var(--spacing-sm)' }}
                       >
                         <RotateCcw size={14} />
@@ -315,9 +321,9 @@ export default function DeliveryView() {
                   <div className="skipped-actions">
                     <span className="skipped-amount">-€{delivery.total_amount.toFixed(2)}</span>
                     {!isCompleted && (
-                      <Button 
-                        variant="secondary" 
-                        onClick={() => handleSetAsCurrent(delivery)}
+                      <Button
+                        variant="secondary"
+                        onClick={() => handleResetToPending(delivery)}
                         style={{ marginLeft: 'var(--spacing-sm)' }}
                       >
                         <RotateCcw size={14} />
@@ -332,18 +338,17 @@ export default function DeliveryView() {
       )}
 
       {/* Skip Modal */}
-      {showSkipModal && (
+      {showSkipModal && selectedCustomer && (
         <Modal
           isOpen={showSkipModal}
           onClose={() => {
             setShowSkipModal(false)
             setSkipReason('')
-            setSelectedCustomer(null)
           }}
           title="Skip Delivery"
         >
           <div className="skip-modal-content">
-            <p>Why are you skipping delivery to <strong>{selectedCustomer?.customer_name}</strong>?</p>
+            <p>Why are you skipping delivery to <strong>{selectedCustomer.customer_name}</strong>?</p>
             <textarea
               value={skipReason}
               onChange={(e) => setSkipReason(e.target.value)}
@@ -361,16 +366,6 @@ export default function DeliveryView() {
             </div>
           </div>
         </Modal>
-      )}
-
-      {/* Route Manager Modal */}
-      {!isCompleted && (
-        <RouteManager
-          saleId={id}
-          isOpen={showRouteManager}
-          onClose={() => setShowRouteManager(false)}
-          onSave={handleRouteSaved}
-        />
       )}
     </div>
   )

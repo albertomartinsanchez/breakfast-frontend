@@ -104,25 +104,8 @@
   letter-spacing: 0.1em;
 }
 
-.sequence-number {
-  position: absolute;
-  top: var(--spacing-md);
-  left: var(--spacing-md);
-  width: 40px;
-  height: 40px;
-  background: var(--color-primary);
-  color: var(--color-bg);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 1.125rem;
-}
-
 .current-delivery h2 {
   margin: var(--spacing-sm) 0 var(--spacing-lg);
-  padding-left: 50px;
 }
 
 .delivery-items {
@@ -221,43 +204,62 @@
   color: var(--color-success);
 }
 
-/* Upcoming */
-.upcoming-list {
+/* Pending Grid */
+.pending-grid {
   display: grid;
-  gap: var(--spacing-sm);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-md);
 }
 
-.upcoming-item {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
+.pending-card {
   background: var(--color-surface-hover);
   border-radius: var(--radius-md);
-}
-
-.upcoming-number {
-  width: 32px;
-  height: 32px;
-  background: var(--color-border);
-  border-radius: 50%;
+  padding: var(--spacing-md);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  color: var(--color-text-muted);
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  border: 1px solid var(--color-border);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.upcoming-info {
-  flex: 1;
+.pending-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.pending-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.upcoming-amount {
+.pending-card-header strong {
+  font-size: 1rem;
+}
+
+.pending-amount {
   color: var(--color-info);
   font-weight: 600;
+  font-size: 1rem;
+}
+
+.pending-card-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  min-height: 24px;
+}
+
+.pending-item {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.pending-card button {
+  margin-top: auto;
 }
 
 /* Collapsible */

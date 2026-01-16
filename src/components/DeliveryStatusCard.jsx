@@ -59,24 +59,14 @@ export default function DeliveryStatusCard({ deliveryStatus }) {
 
           <div className="delivery-info">
             <div className="info-item">
-              <MapPin size={18} />
-              <span>Posición #{deliveryStatus.position_in_queue} en la cola</span>
-            </div>
-
-            <div className="info-item">
               <Clock size={18} />
               <span>
-                {deliveryStatus.deliveries_ahead > 0
-                  ? `${deliveryStatus.deliveries_ahead} entregas por delante`
-                  : '¡Eres el siguiente!'}
+                {deliveryStatus.is_next
+                  ? '¡Eres el siguiente!'
+                  : `Hay algunas entregas antes de la tuya, ¡pero ya queda menos!`}
               </span>
             </div>
 
-            {deliveryStatus.estimated_minutes && (
-              <div className="eta">
-                Llegada estimada: ~{deliveryStatus.estimated_minutes} minutos
-              </div>
-            )}
           </div>
         </div>
       </div>

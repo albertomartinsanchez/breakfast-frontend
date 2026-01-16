@@ -80,9 +80,8 @@ export const api = {
   getSaleState: (id) => request(`/sales/${id}/state`),
   startDelivery: (id) => request(`/sales/${id}/delivery`, { method: 'POST' }),
   getDeliveryRoute: (id) => request(`/sales/${id}/delivery`),
-  updateDeliveryRoute: (id, route) => request(`/sales/${id}/delivery`, { method: 'PATCH', body: { route } }),
   getDeliveryProgress: (id) => request(`/sales/${id}/delivery/progress`),
-  updateDeliveryStatus: (saleId, customerId, data) => request(`/sales/${saleId}/delivery/customers/${customerId}/status`, { method: 'PATCH', body: data }),
+  updateDeliveryCustomer: (saleId, customerId, data) => request(`/sales/${saleId}/delivery/customers/${customerId}`, { method: 'PATCH', body: data }),
 
   getCustomerAnalytics: (id, params = '') => request(`/customers/${id}/analytics?${params}`),
   getProductAnalytics: (id, params = '') => request(`/products/${id}/analytics?${params}`),
