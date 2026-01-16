@@ -15,7 +15,7 @@ export default function Customers() {
   const [searchTerm, setSearchTerm] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [editingCustomer, setEditingCustomer] = useState(null)
-  const [formData, setFormData] = useState({ name: '', address: '', phone: '' })
+  const [formData, setFormData] = useState({ name: '', address: '', phone: '', credit: 0 })
   const [formError, setFormError] = useState('')
 
   useEffect(() => {
@@ -45,10 +45,15 @@ export default function Customers() {
   const openModal = (customer = null) => {
     if (customer) {
       setEditingCustomer(customer)
-      setFormData(customer)
+      setFormData({
+        name: customer.name,
+        address: customer.address || '',
+        phone: customer.phone || '',
+        credit: customer.credit || 0
+      })
     } else {
       setEditingCustomer(null)
-      setFormData({ name: '', address: '', phone: '' })
+      setFormData({ name: '', address: '', phone: '', credit: 0 })
     }
     setFormError('')
     setModalOpen(true)
@@ -107,6 +112,7 @@ export default function Customers() {
                 <th>Name</th>
                 <th>Address</th>
                 <th>Phone</th>
+                <th>Credit</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -116,6 +122,9 @@ export default function Customers() {
                   <td><strong>{customer.name}</strong></td>
                   <td>{customer.address || '-'}</td>
                   <td>{customer.phone || '-'}</td>
+                  <td style={{ color: customer.credit > 0 ? 'var(--color-success)' : 'inherit' }}>
+                    {customer.credit > 0 ? `€${customer.credit.toFixed(2)}` : '-'}
+                  </td>
                   <td>
                     <div className="actions">
                       {customer.access_token && (
@@ -145,6 +154,14 @@ export default function Customers() {
           <Input label="Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
           <Input label="Address" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} />
           <Input label="Phone" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
+          <Input
+            label="Credit (€)"
+            type="number"
+            step="0.01"
+            min="0"
+            value={formData.credit}
+            onChange={(e) => setFormData({ ...formData, credit: parseFloat(e.target.value) || 0 })}
+          />
           <div style={{ display: 'flex', gap: 'var(--spacing-md)', justifyContent: 'flex-end' }}>
             <Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Cancel</Button>
             <Button type="submit">{editingCustomer ? 'Update' : 'Create'}</Button>

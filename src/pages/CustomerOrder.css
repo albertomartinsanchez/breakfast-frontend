@@ -60,6 +60,18 @@
   margin: 0;
 }
 
+.customer-credit {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  margin: 0.5rem 0 0 0;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  font-weight: 600;
+}
+
 .message-banner {
   max-width: 700px;
   margin: 1rem auto;
@@ -270,6 +282,12 @@
   font-size: 1.1rem;
 }
 
+.credit-indicator {
+  font-size: 0.8rem;
+  color: #4caf50;
+  font-weight: 500;
+}
+
 .summary-details {
   animation: slideUp 0.2s ease-out;
 }
@@ -298,17 +316,62 @@
   color: #000;
 }
 
+.summary-subtotal {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.summary-credit {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background: #e8f5e9;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #2e7d32;
+}
+
+.summary-credit span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.credit-amount {
+  font-weight: 700;
+  color: #2e7d32;
+}
+
 .summary-total {
   display: flex;
   justify-content: space-between;
   padding: 1rem 0;
   border-top: 2px solid #e0e0e0;
   font-size: 1.125rem;
+  margin-top: 0.5rem;
 }
 
 .total-amount {
   color: #d4a574;
   font-size: 1.5rem;
+}
+
+.total-amount.free {
+  color: #4caf50;
+}
+
+.summary-remaining-credit {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #666;
+  padding: 0.5rem;
+  background: #f5f5f5;
+  border-radius: 4px;
+  margin-top: 0.5rem;
 }
 
 .save-btn {

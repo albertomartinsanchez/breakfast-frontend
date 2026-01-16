@@ -17,25 +17,39 @@ export const generateSalePDF = async (sale, deliveryData = null) => {
   
   // If we have delivery data, show actual collected amounts
   if (deliveryData && sale.status === 'completed') {
-    pdf.addKeyValue('Expected Revenue', formatCurrency(sale.total_revenue), { 
+    pdf.addKeyValue('Expected Revenue', formatCurrency(sale.total_revenue), {
       valueColor: '#9aa0a6'
     })
-    pdf.addKeyValue('Actual Collected', formatCurrency(deliveryData.total_collected), { 
+    pdf.addKeyValue('Cash Collected', formatCurrency(deliveryData.total_collected), {
       valueColor: '#81b3d0',
-      bold: true 
+      bold: true
     })
-    
+
+    // Show credit applied if any
+    const creditApplied = deliveryData.total_credit_applied || 0
+    if (creditApplied > 0) {
+      pdf.addKeyValue('Credit Applied', formatCurrency(creditApplied), {
+        valueColor: '#7fb069'
+      })
+    }
+
     if (deliveryData.skipped_count > 0) {
-      pdf.addKeyValue('Lost from Skipped', formatCurrency(deliveryData.total_skipped_amount), { 
+      pdf.addKeyValue('Lost from Skipped', formatCurrency(deliveryData.total_skipped_amount), {
         valueColor: '#e07a5f'
       })
     }
-    
-    // Calculate actual profit (profit from completed only)
-    const actualProfit = sale.total_benefit * (deliveryData.total_collected / sale.total_revenue)
-    pdf.addKeyValue('Actual Profit', formatCurrency(actualProfit), { 
+
+    // Calculate actual revenue (cash + credit) and profit from completed deliveries
+    const actualRevenue = deliveryData.total_collected + creditApplied
+    pdf.addKeyValue('Actual Revenue', formatCurrency(actualRevenue), {
+      valueColor: '#81b3d0',
+      bold: true
+    })
+
+    const actualProfit = sale.total_benefit * (actualRevenue / sale.total_revenue)
+    pdf.addKeyValue('Actual Profit', formatCurrency(actualProfit), {
       valueColor: '#7fb069',
-      bold: true 
+      bold: true
     })
   } else {
     pdf.addKeyValue('Total Revenue', formatCurrency(sale.total_revenue), { 
@@ -68,10 +82,11 @@ export const generateSalePDF = async (sale, deliveryData = null) => {
   pdf.addSectionHeading('Customers & Products')
 
   sale.customer_sales.forEach((cs, index) => {
-    // Check if this customer was skipped (if we have delivery data)
+    // Check delivery status and get credit info
     let customerStatus = ''
+    let deliveryStep = null
     if (deliveryData) {
-      const deliveryStep = deliveryData.deliveries?.find(d => d.customer_id === cs.customer_id)
+      deliveryStep = deliveryData.deliveries?.find(d => d.customer_id === cs.customer_id)
       if (deliveryStep?.status === 'skipped') {
         customerStatus = ' [SKIPPED]'
       } else if (deliveryStep?.status === 'completed') {
@@ -80,17 +95,39 @@ export const generateSalePDF = async (sale, deliveryData = null) => {
     }
 
     // Customer header
-    pdf.addText(`${index + 1}. ${cs.customer_name}${customerStatus}`, { 
+    pdf.addText(`${index + 1}. ${cs.customer_name}${customerStatus}`, {
       fontSize: 12,
       bold: true,
       color: customerStatus.includes('SKIPPED') ? '#e07a5f' : '#d4a574'
     })
-    
-    pdf.addText(`Revenue: ${formatCurrency(cs.total_revenue)} | Profit: ${formatCurrency(cs.total_benefit)}`, {
+
+    // Show revenue/profit info
+    let infoLine = `Revenue: ${formatCurrency(cs.total_revenue)} | Profit: ${formatCurrency(cs.total_benefit)}`
+    pdf.addText(infoLine, {
       fontSize: 9,
       color: '#c0c0c0',
       indent: 5
     })
+
+    // Show collection details if delivery is completed
+    if (deliveryStep?.status === 'completed') {
+      const creditApplied = deliveryStep.credit_applied || 0
+      const amountCollected = deliveryStep.amount_collected || 0
+
+      if (creditApplied > 0) {
+        pdf.addText(`Collected: ${formatCurrency(amountCollected)} | Credit Applied: ${formatCurrency(creditApplied)}`, {
+          fontSize: 9,
+          color: '#7fb069',
+          indent: 5
+        })
+      } else {
+        pdf.addText(`Collected: ${formatCurrency(amountCollected)}`, {
+          fontSize: 9,
+          color: '#81b3d0',
+          indent: 5
+        })
+      }
+    }
 
     pdf.addSpace(3)
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Check, SkipForward, Package, DollarSign, AlertCircle, ChevronDown, ChevronUp, Navigation, RotateCcw } from 'lucide-react'
+import { ArrowLeft, Check, SkipForward, Package, DollarSign, AlertCircle, ChevronDown, ChevronUp, Navigation, RotateCcw, CreditCard } from 'lucide-react'
 import { api } from '../services/api'
 import Card from '../components/Card'
 import Button from '../components/Button'
@@ -71,7 +71,7 @@ export default function DeliveryView() {
     try {
       await api.updateDeliveryCustomer(id, selectedCustomer.customer_id, {
         status: 'completed',
-        amount_collected: selectedCustomer.total_amount
+        amount_collected: selectedCustomer.amount_to_collect
       })
       await loadDeliveryData()
       await loadSaleStatus()
@@ -191,10 +191,36 @@ export default function DeliveryView() {
             ))}
           </div>
 
-          <div className="delivery-total">
-            <strong>Total to collect:</strong>
-            <strong className="total-amount">€{selectedCustomer.total_amount.toFixed(2)}</strong>
+          <div className="delivery-subtotal">
+            <span>Order total:</span>
+            <span>€{selectedCustomer.total_amount.toFixed(2)}</span>
           </div>
+
+          {selectedCustomer.customer_credit > 0 && (
+            <div className="credit-info">
+              <div className="credit-row">
+                <span><CreditCard size={16} /> Customer credit:</span>
+                <span className="credit-amount">€{selectedCustomer.customer_credit.toFixed(2)}</span>
+              </div>
+              <div className="credit-row applied">
+                <span>Credit applied:</span>
+                <span className="credit-applied">-€{selectedCustomer.credit_to_apply.toFixed(2)}</span>
+              </div>
+            </div>
+          )}
+
+          <div className="delivery-total">
+            <strong>To collect:</strong>
+            <strong className={`total-amount ${selectedCustomer.amount_to_collect === 0 ? 'paid-by-credit' : ''}`}>
+              €{selectedCustomer.amount_to_collect.toFixed(2)}
+            </strong>
+          </div>
+
+          {selectedCustomer.amount_to_collect === 0 && (
+            <div className="credit-paid-notice">
+              <Check size={16} /> Fully covered by credit
+            </div>
+          )}
 
           <div className="delivery-actions">
             <Button variant="success" onClick={handleComplete} fullWidth>
@@ -245,7 +271,23 @@ export default function DeliveryView() {
                 <div key={delivery.customer_id} className="pending-card">
                   <div className="pending-card-header">
                     <strong>{delivery.customer_name}</strong>
-                    <span className="pending-amount">€{delivery.total_amount.toFixed(2)}</span>
+                    <div className="pending-amounts">
+                      {delivery.customer_credit > 0 && (
+                        <span className="pending-credit" title="Available credit">
+                          <CreditCard size={12} /> €{delivery.customer_credit.toFixed(2)}
+                        </span>
+                      )}
+                      <span className="pending-amount">
+                        {delivery.credit_to_apply > 0 ? (
+                          <>
+                            <span className="original-price">€{delivery.total_amount.toFixed(2)}</span>
+                            <span className="discounted-price">€{delivery.amount_to_collect.toFixed(2)}</span>
+                          </>
+                        ) : (
+                          `€${delivery.total_amount.toFixed(2)}`
+                        )}
+                      </span>
+                    </div>
                   </div>
                   <div className="pending-card-items">
                     {delivery.items.map((item, idx) => (
@@ -285,7 +327,14 @@ export default function DeliveryView() {
                     </span>
                   </div>
                   <div className="completed-actions">
-                    <span className="completed-amount">€{delivery.amount_collected.toFixed(2)}</span>
+                    <div className="completed-amount-info">
+                      <span className="completed-amount">€{delivery.amount_collected.toFixed(2)}</span>
+                      {delivery.credit_applied > 0 && (
+                        <span className="credit-badge" title="Credit applied">
+                          +€{delivery.credit_applied.toFixed(2)} credit
+                        </span>
+                      )}
+                    </div>
                     {!isCompleted && (
                       <Button
                         variant="secondary"

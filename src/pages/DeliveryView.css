@@ -151,6 +151,108 @@
   font-size: 1.5rem;
 }
 
+.total-amount.paid-by-credit {
+  color: var(--color-info);
+}
+
+/* Credit Info Styles */
+.delivery-subtotal {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.credit-info {
+  background: var(--color-info-bg);
+  border: 1px solid var(--color-info);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.credit-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-xs) 0;
+}
+
+.credit-row span {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.credit-amount {
+  color: var(--color-info);
+  font-weight: 600;
+}
+
+.credit-applied {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.credit-paid-notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: var(--color-success-bg);
+  border: 1px solid var(--color-success);
+  border-radius: var(--radius-md);
+  color: var(--color-success);
+  margin-bottom: var(--spacing-md);
+  font-weight: 500;
+}
+
+/* Pending card credit styles */
+.pending-amounts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.pending-credit {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  color: var(--color-info);
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  margin-right: var(--spacing-xs);
+}
+
+.discounted-price {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+/* Completed with credit badge */
+.completed-amount-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.credit-badge {
+  font-size: 0.65rem;
+  color: var(--color-info);
+  background: var(--color-info-bg);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
 .delivery-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;

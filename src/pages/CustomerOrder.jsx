@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, ShoppingCart, Plus, Minus, Save, CheckCircle, AlertCircle, ChevronUp, ChevronDown } from 'lucide-react'
+import { ArrowLeft, ShoppingCart, Plus, Minus, Save, CheckCircle, AlertCircle, ChevronUp, ChevronDown, CreditCard } from 'lucide-react'
 import './CustomerOrder.css'
 import DeliveryStatusCard from '../components/DeliveryStatusCard'
 import { api } from '../services/api.js'
@@ -153,6 +153,11 @@ export default function CustomerOrder() {
     saleData.current_order.reduce((acc, item) => ({...acc, [item.product_id]: item.quantity}), {})
   )
 
+  // Calculate credit to apply and amount to pay
+  const customerCredit = saleData.customer_credit || 0
+  const creditToApply = Math.min(customerCredit, totalAmount)
+  const amountToPay = totalAmount - creditToApply
+
   return (
     <div className="customer-order">
       <header className="order-header">
@@ -165,6 +170,11 @@ export default function CustomerOrder() {
           <div className="order-info">
             <p className="customer-name">{saleData.customer_name}</p>
             <p className="sale-date">{new Date(saleData.sale_date).toLocaleDateString('es-ES')}</p>
+            {saleData.customer_credit > 0 && (
+              <p className="customer-credit">
+                <CreditCard size={14} /> Crédito disponible: €{saleData.customer_credit.toFixed(2)}
+              </p>
+            )}
           </div>
         </div>
       </header>
@@ -242,7 +252,8 @@ export default function CustomerOrder() {
             <div className="summary-toggle-content">
               <ShoppingCart size={20} />
               <span className="toggle-text">
-                {totalItems} {totalItems === 1 ? 'producto' : 'productos'} · <strong>€{totalAmount.toFixed(2)}</strong>
+                {totalItems} {totalItems === 1 ? 'producto' : 'productos'} · <strong>€{amountToPay.toFixed(2)}</strong>
+                {creditToApply > 0 && <span className="credit-indicator"> (con crédito)</span>}
               </span>
             </div>
             {cartExpanded ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
@@ -264,10 +275,30 @@ export default function CustomerOrder() {
                 })}
               </div>
 
-              <div className="summary-total">
-                <strong>Total:</strong>
-                <strong className="total-amount">€{totalAmount.toFixed(2)}</strong>
+              <div className="summary-subtotal">
+                <span>Subtotal:</span>
+                <span>€{totalAmount.toFixed(2)}</span>
               </div>
+
+              {creditToApply > 0 && (
+                <div className="summary-credit">
+                  <span><CreditCard size={14} /> Crédito aplicado:</span>
+                  <span className="credit-amount">-€{creditToApply.toFixed(2)}</span>
+                </div>
+              )}
+
+              <div className="summary-total">
+                <strong>A pagar:</strong>
+                <strong className={`total-amount ${amountToPay === 0 ? 'free' : ''}`}>
+                  {amountToPay === 0 ? '¡Gratis!' : `€${amountToPay.toFixed(2)}`}
+                </strong>
+              </div>
+
+              {creditToApply > 0 && customerCredit > creditToApply && (
+                <div className="summary-remaining-credit">
+                  Crédito restante después de este pedido: €{(customerCredit - creditToApply).toFixed(2)}
+                </div>
+              )}
             </div>
           )}
 
