@@ -95,6 +95,18 @@ export const api = {
   // SSE stream URLs for real-time updates
   getDeliveryStatusStreamUrl: (token, saleId) => `${apiBaseUrl}/customer/${token}/sales/${saleId}/delivery-status/stream`,
   getSalesStatusStreamUrl: (token) => `${apiBaseUrl}/customer/${token}/sales/status-stream`,
+
+  // Push notification device registration
+  registerDevice: (token, deviceToken, deviceType) => request(`/customer/${token}/devices`, {
+    method: 'POST',
+    body: { device_token: deviceToken, device_type: deviceType },
+    skipAuth: true
+  }),
+  unregisterDevice: (token, deviceToken) => request(`/customer/${token}/devices`, {
+    method: 'DELETE',
+    body: { device_token: deviceToken, device_type: 'android' },
+    skipAuth: true
+  }),
 }
 
 export { ApiError }

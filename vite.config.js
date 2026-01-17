@@ -10,4 +10,8 @@ export default defineConfig({
   build: {
     outDir: 'dist',
   },
+  // Handle SPA routing for Capacitor
+  preview: {
+    port: 3000,
+  },
 })

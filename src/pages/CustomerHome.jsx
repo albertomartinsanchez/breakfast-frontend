@@ -5,6 +5,7 @@ import { api } from '../services/api.js'
 import { t } from '../utils/translations.js'
 import { playNotificationSound } from '../utils/notificationSound.js'
 import NotificationToast from '../components/NotificationToast.jsx'
+import { initPushNotifications, isNativePlatform } from '../services/pushNotifications.js'
 import './CustomerHome.css'
 
 export default function CustomerHome() {
@@ -14,10 +15,23 @@ export default function CustomerHome() {
   const [error, setError] = useState(null)
   const [notification, setNotification] = useState(null)
   const previousStatuses = useRef({})
+  const pushInitialized = useRef(false)
 
   useEffect(() => {
     loadCustomerData()
   }, [token])
+
+  // Initialize push notifications on native platforms
+  useEffect(() => {
+    if (customer && isNativePlatform() && !pushInitialized.current) {
+      pushInitialized.current = true
+      initPushNotifications(token).then((fcmToken) => {
+        if (fcmToken) {
+          console.log('Push notifications initialized')
+        }
+      })
+    }
+  }, [customer, token])
 
   // SSE subscription for real-time sale status updates
   useEffect(() => {
