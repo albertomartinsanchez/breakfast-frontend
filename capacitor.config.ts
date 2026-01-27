@@ -4,9 +4,6 @@ const config: CapacitorConfig = {
   appId: 'com.breakfast.orders',
   appName: 'Breakfast Orders',
   webDir: 'dist',
-  server: {
-    url: 'https://sample-api-frontend.onrender.com/app',
-  },
   plugins: {
     PushNotifications: {
       presentationOptions: ['badge', 'sound', 'alert']

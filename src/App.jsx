@@ -21,6 +21,11 @@ import { isNativePlatform, setupNotificationListeners } from './services/pushNot
 function App() {
   // Set up push notification listeners on app start
   useEffect(() => {
+    // Redirect to /app on native platform if at root
+    if (isNativePlatform() && window.location.pathname === '/') {
+      window.location.replace('/app')
+    }
+
     if (isNativePlatform()) {
       setupNotificationListeners(
         // Notification received in foreground

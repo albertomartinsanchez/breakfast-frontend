@@ -140,3 +140,10 @@ vite.config.ts.timestamp-*
 
 # Temp files
 *-cwd
+
+# Firebase credentials
+google-services.json
+*-firebase-adminsdk-*.json
+
+# Windows shortcuts
+*.lnk

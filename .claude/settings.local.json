@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e:*)",
+      "Bash(keytool:*)",
+      "Bash(where:*)",
+      "Bash(echo:*)",
+      "Bash(dir \"C:\\\\Program Files\\\\Java\")",
+      "Bash(dir \"C:\\\\Program Files\\\\Eclipse Adoptium\")",
+      "Bash(\"/c/Program Files/Java/jdk-25/bin/keytool\" -genkey -v -keystore breakfast-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias breakfast-key -storepass nnUCZu7RDEFFx4ch -keypass nnUCZu7RDEFFx4ch -dname \"CN=Breakfast Orders, OU=Mobile, O=Breakfast, L=Unknown, ST=Unknown, C=US\")",
+      "Bash(npm run build:*)",
+      "Bash(npx cap:*)",
+      "Bash(./gradlew bundleRelease:*)",
+      "Bash(./gradlew:*)",
+      "Bash(tree:*)"
+    ]
+  }
+}
