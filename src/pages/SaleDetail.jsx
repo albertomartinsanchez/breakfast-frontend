@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { ArrowLeft, Edit, Trash2, Calendar, DollarSign, TrendingUp, Lock, Unlock, Truck, FileText } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Calendar, DollarSign, TrendingUp, Lock, Unlock, Truck, FileText, MapPin } from 'lucide-react'
 import { api } from '../services/api'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import { generateSalePDF } from '../utils/salePDF'
+import RouteManager from '../components/RouteManager'
 import './SaleDetail.css'
 
 export default function SaleDetail() {
@@ -13,6 +14,9 @@ export default function SaleDetail() {
   const [sale, setSale] = useState(null)
   const [loading, setLoading] = useState(true)
   const [generatingPDF, setGeneratingPDF] = useState(false)
+  const [showRouteManager, setShowRouteManager] = useState(false)
+  const [routeSet, setRouteSet] = useState(false)
+  const [deliveryRoute, setDeliveryRoute] = useState([])
 
   useEffect(() => {
     loadSale()
@@ -22,6 +26,18 @@ export default function SaleDetail() {
     try {
       const data = await api.getSale(id)
       setSale(data)
+
+      // Check if route exists for closed sales
+      if (data.status === 'closed') {
+        try {
+          const route = await api.getDeliveryRoute(id)
+          setDeliveryRoute(route || [])
+          setRouteSet(route && route.length > 0)
+        } catch {
+          setDeliveryRoute([])
+          setRouteSet(false)
+        }
+      }
     } catch (error) {
       console.error('Failed to load sale:', error)
       navigate('/sales')
@@ -97,6 +113,23 @@ export default function SaleDetail() {
     }
   }
 
+  const getSortedCustomerSales = () => {
+    if (!sale) return []
+    if (deliveryRoute.length === 0) return sale.customer_sales
+
+    // Create a map of customer_id to sequence_order
+    const sequenceMap = new Map(
+      deliveryRoute.map(r => [r.customer_id, r.sequence_order])
+    )
+
+    // Sort customer_sales by sequence_order (customers not in route go to the end)
+    return [...sale.customer_sales].sort((a, b) => {
+      const seqA = sequenceMap.get(a.customer_id) ?? Infinity
+      const seqB = sequenceMap.get(b.customer_id) ?? Infinity
+      return seqA - seqB
+    })
+  }
+
   const getStatusBadge = (status) => {
     const badges = {
       draft: { label: 'Open', className: 'status-draft' },
@@ -129,7 +162,14 @@ export default function SaleDetail() {
           {sale.status === 'closed' && (
             <>
               <Button variant="secondary" onClick={handleReopenSale}><Unlock size={16} /> Reopen</Button>
-              <Button variant="success" onClick={handleStartDelivery}><Truck size={16} /> Start Delivery</Button>
+              <Button variant={routeSet ? "secondary" : "primary"} onClick={() => setShowRouteManager(true)}>
+                <MapPin size={16} /> {routeSet ? 'Edit Route' : 'Set Route'}
+              </Button>
+              {routeSet && (
+                <Button variant="success" onClick={handleStartDelivery}>
+                  <Truck size={16} /> Start Delivery
+                </Button>
+              )}
             </>
           )}
           {sale.status === 'in_progress' && (
@@ -178,7 +218,7 @@ export default function SaleDetail() {
 
         <div className="customers-section">
           <h3>Customers & Products</h3>
-          {sale.customer_sales.map((cs, idx) => (
+          {getSortedCustomerSales().map((cs, idx) => (
             <div key={idx} className="customer-section">
               <div className="customer-header">
                 <h4>{cs.customer_name}</h4>
@@ -213,6 +253,22 @@ export default function SaleDetail() {
           ))}
         </div>
       </Card>
+
+      <RouteManager
+        saleId={id}
+        isOpen={showRouteManager}
+        onClose={() => setShowRouteManager(false)}
+        onSave={async () => {
+          setRouteSet(true)
+          try {
+            const route = await api.getDeliveryRoute(id)
+            setDeliveryRoute(route || [])
+          } catch {
+            // Route was just saved, so this shouldn't fail
+          }
+          loadSale()
+        }}
+      />
     </div>
   )
 }

@@ -82,6 +82,7 @@ export const api = {
   getDeliveryRoute: (id) => request(`/sales/${id}/delivery`),
   getDeliveryProgress: (id) => request(`/sales/${id}/delivery/progress`),
   updateDeliveryCustomer: (saleId, customerId, data) => request(`/sales/${saleId}/delivery/customers/${customerId}`, { method: 'PATCH', body: data }),
+  updateDeliveryRoute: (id, route) => request(`/sales/${id}/delivery`, { method: 'PATCH', body: { route } }),
 
   getCustomerAnalytics: (id, params = '') => request(`/customers/${id}/analytics?${params}`),
   getProductAnalytics: (id, params = '') => request(`/products/${id}/analytics?${params}`),
