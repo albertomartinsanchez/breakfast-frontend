@@ -16,6 +16,7 @@ import Analytics from './pages/Analytics'
 import CustomerHome from './pages/CustomerHome'
 import CustomerOrder from './pages/CustomerOrder'
 import CustomerKeyEntry from './pages/CustomerKeyEntry'
+import PrivacyPolicy from './pages/PrivacyPolicy'
 import { isNativePlatform, setupNotificationListeners } from './services/pushNotifications'
 
 function App() {
@@ -50,6 +51,9 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          {/* Public pages */}
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+
           {/* Mobile app key entry screen */}
           <Route path="/app" element={<CustomerKeyEntry />} />
 
