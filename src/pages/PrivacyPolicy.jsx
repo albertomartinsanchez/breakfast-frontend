@@ -94,6 +94,15 @@ export default function PrivacyPolicy() {
             cambios significativos a través de la aplicación.
           </p>
         </section>
+
+        <section>
+          <h2>10. Atribuciones</h2>
+          <p>
+            <a href="https://www.flaticon.com/free-icons/croissant" target="_blank" rel="noopener noreferrer">
+              Iconos de croissant creados por Freepik - Flaticon
+            </a>
+          </p>
+        </section>
       </div>
     </div>
   )

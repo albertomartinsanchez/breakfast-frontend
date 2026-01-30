@@ -340,6 +340,12 @@ graph TD
 
 ---
 
+## 🎨 Attributions
+
+- App icon: [Croissant icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/croissant)
+
+---
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
